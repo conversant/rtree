@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 import java.io.PrintStream;
 
@@ -7,7 +7,7 @@ import java.io.PrintStream;
  */
 public class Stats {
 
-    private RTree.SPLIT_TYPE type;
+    private RTree.Split type;
     private int maxFill;
     private int minFill;
 
@@ -50,11 +50,11 @@ public class Stats {
         return (getEntriesPerLeaf() * 100) / maxFill;
     }
 
-    public RTree.SPLIT_TYPE getType() {
+    public RTree.Split getType() {
         return type;
     }
 
-    public void setType(RTree.SPLIT_TYPE type) {
+    public void setType(RTree.Split type) {
         this.type = type;
     }
 

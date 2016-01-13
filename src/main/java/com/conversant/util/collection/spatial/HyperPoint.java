@@ -1,6 +1,8 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 /**
+ * N dimensional point used to signify the bounds of a HyperRect
+ *
  * Created by jcairns on 5/5/15.
  */
 public interface HyperPoint {

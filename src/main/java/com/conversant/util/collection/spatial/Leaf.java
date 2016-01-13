@@ -1,8 +1,10 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 import java.util.function.Consumer;
 
 /**
+ * Node that will contain the data entries. Implemented by different type of SplitType leaf classes.
+ *
  * Created by jcairns on 4/30/15.
  */
 abstract class Leaf<T> implements Node<T> {
@@ -13,9 +15,9 @@ abstract class Leaf<T> implements Node<T> {
     protected final T[]    entry;
     protected final RectBuilder<T> builder;
     protected int size;
-    protected RTree.SPLIT_TYPE splitType;
+    protected RTree.Split splitType;
 
-    protected Leaf(final RectBuilder<T> builder, final int mMin, final int mMax, final RTree.SPLIT_TYPE splitType) {
+    protected Leaf(final RectBuilder<T> builder, final int mMin, final int mMax, final RTree.Split splitType) {
         this.mMin = mMin;
         this.mMax = mMax;
         this.mbr = null;
@@ -80,12 +82,10 @@ abstract class Leaf<T> implements Node<T> {
 
     @Override
     public Node<T> update(final T told, final T tnew) {
-        for(int i = 0 ; i < this.size; i++){
-            if(entry[i].equals(told)){
-                entry[i] = tnew;
-                r[i] = builder.getBBox(tnew);
-            }
-        }
+
+        remove(told);
+        add(tnew);
+
         return this;
     }
 
@@ -121,7 +121,7 @@ abstract class Leaf<T> implements Node<T> {
         return mbr;
     }
 
-    static <R> Node<R> create(final RectBuilder<R> builder, final int mMin, final int M, final RTree.SPLIT_TYPE splitType) {
+    static <R> Node<R> create(final RectBuilder<R> builder, final int mMin, final int M, final RTree.Split splitType) {
 
         switch(splitType) {
             case AXIAL:
@@ -136,6 +136,13 @@ abstract class Leaf<T> implements Node<T> {
         }
     }
 
+    /**
+     * Splits a lead node that has the maximum number of entries into 2 leaf nodes of the same type with half
+     * of the entries in each one.
+     *
+     * @param t entry to be added to the full leaf node
+     * @return newly created node storing half the entries of this node
+     */
     protected abstract Node<T> split(final T t);
 
     @Override
@@ -163,6 +170,13 @@ abstract class Leaf<T> implements Node<T> {
         stats.countEntriesAtDepth(size, depth);
     }
 
+    /**
+     * Figures out which newly made leaf node (see split method) to add a data entry to.
+     *
+     * @param l1Node left node
+     * @param l2Node right node
+     * @param t data entry to be added
+     */
     protected final void classify(final Node<T> l1Node, final Node<T> l2Node, final T t) {
         final HyperRect tRect = builder.getBBox(t);
         final HyperRect l1Mbr = l1Node.getRect().getMbr(tRect);

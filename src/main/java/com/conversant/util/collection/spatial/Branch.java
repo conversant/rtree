@@ -1,8 +1,10 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 import java.util.function.Consumer;
 
 /**
+ * RTree node that contains leaf nodes
+ *
  * Created by jcairns on 4/30/15.
  */
 final class Branch<T> implements Node<T> {
@@ -12,9 +14,9 @@ final class Branch<T> implements Node<T> {
     private final RectBuilder<T> builder;
     private final int mMax;
     private final int mMin;
-    private final RTree.SPLIT_TYPE splitType;
+    private final RTree.Split splitType;
 
-    Branch(final RectBuilder<T> builder, final int mMin, final int mMax, final RTree.SPLIT_TYPE splitType) {
+    Branch(final RectBuilder<T> builder, final int mMin, final int mMax, final RTree.Split splitType) {
         this.mMin = mMin;
         this.mMax = mMax;
         this.builder = builder;
@@ -24,6 +26,12 @@ final class Branch<T> implements Node<T> {
         this.splitType = splitType;
     }
 
+    /**
+     * Add a new node to this branch's list of children
+     *
+     * @param n node to be added (can be leaf or branch)
+     * @return position of the added node
+     */
     protected int addChild(final Node<T> n) {
         if(size < mMax) {
             child[size++] = n;
@@ -40,10 +48,6 @@ final class Branch<T> implements Node<T> {
         }
     }
 
-    int getSize() {
-        return size;
-    }
-
     @Override
     public boolean isLeaf() {
         return false;
@@ -54,7 +58,12 @@ final class Branch<T> implements Node<T> {
         return mbr;
     }
 
-    // TODO - review add methodology - can we prove it gives us good node density or does it need another pass
+    /**
+     * Adds a data entry to one of the child nodes of this branch
+     *
+     * @param t data entry to add
+     * @return Node that the entry was added to
+     */
     @Override
     public Node<T> add(final T t) {
         final HyperRect tRect = builder.getBBox(t);
@@ -153,6 +162,9 @@ final class Branch<T> implements Node<T> {
         return n-n0;
     }
 
+    /**
+     * @return number of child nodes
+     */
     @Override
     public int size() {
         return size;

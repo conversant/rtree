@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class AxialSplitLeafTest {
 
-    private static final RTree.SPLIT_TYPE TYPE = RTree.SPLIT_TYPE.AXIAL;
+    private static final RTree.Split TYPE = RTree.Split.AXIAL;
 
     /**
      * Adds enough entries to force a single split and confirms that

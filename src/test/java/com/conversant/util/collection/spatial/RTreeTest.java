@@ -1,10 +1,9 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.swing.text.html.HTMLDocument;
 import java.util.Random;
 
 /**
@@ -44,7 +43,7 @@ public class RTreeTest {
 
         final int entryCount = 20;
 
-        for (RTree.SPLIT_TYPE type : RTree.SPLIT_TYPE.values()) {
+        for (RTree.Split type : RTree.Split.values()) {
             RTree<Rect2D> rTree = createRect2DTree(type, 2, 8);
             for (int i = 0; i < entryCount; i++) {
                 rTree.add(new Rect2D(i, i, i+3, i+3));
@@ -82,7 +81,7 @@ public class RTreeTest {
         final int entryCount = 10000;
         final Rect2D[] rects = generateRandomRects(entryCount);
 
-        for (RTree.SPLIT_TYPE type : RTree.SPLIT_TYPE.values()) {
+        for (RTree.Split type : RTree.Split.values()) {
             RTree<Rect2D> rTree = createRect2DTree(type, 2, 8);
             for (int i = 0; i < rects.length; i++) {
                 rTree.add(rects[i]);
@@ -109,13 +108,14 @@ public class RTreeTest {
      * Collect stats making the structure of trees of each split type
      * more visible.
      */
-    @Test
+    @Ignore
+    // This test ignored because output needs to be manually evaluated.
     public void treeStructureStatsTest() {
 
         final int entryCount = 50_000;
 
         final Rect2D[] rects = generateRandomRects(entryCount);
-        for (RTree.SPLIT_TYPE type : RTree.SPLIT_TYPE.values()) {
+        for (RTree.Split type : RTree.Split.values()) {
             RTree<Rect2D> rTree = createRect2DTree(type, 2, 8);
             for (int i = 0; i < rects.length; i++) {
                 rTree.add(rects[i]);
@@ -134,13 +134,14 @@ public class RTreeTest {
      *  - Evals for QUADRATIC tree increases with size of the search bounding box.
      *  - QUADRATIC seems to be ideal for small search bounding boxes.
      */
-    @Test
+    @Ignore
+    // This test ignored because output needs to be manually evaluated.
     public void treeSearchStatsTest() {
 
         final int entryCount = 5000;
 
         final Rect2D[] rects = generateRandomRects(entryCount);
-        for (RTree.SPLIT_TYPE type : RTree.SPLIT_TYPE.values()) {
+        for (RTree.Split type : RTree.Split.values()) {
             RTree<Rect2D> rTree = createRect2DTree(type, 2, 8);
             for (int i = 0; i < rects.length; i++) {
                 rTree.add(rects[i]);
@@ -161,7 +162,7 @@ public class RTreeTest {
 
     @Test
     public void treeRemovalTest() {
-        final RTree<Rect2D> rTree = new RTree<Rect2D>(new Rect2D.Builder(), 2, 8, RTree.SPLIT_TYPE.QUADRATIC);
+        final RTree<Rect2D> rTree = createRect2DTree(RTree.Split.QUADRATIC);
 
         Rect2D[] rects = new Rect2D[1000];
         for(int i = 0; i < rects.length; i++){
@@ -181,8 +182,8 @@ public class RTreeTest {
     }
 
     @Test
-    public void treeSingelRemovalTest() {
-        final RTree<Rect2D> rTree = new RTree<Rect2D>(new Rect2D.Builder(), 2, 8, RTree.SPLIT_TYPE.QUADRATIC);
+    public void treeSingleRemovalTest() {
+        final RTree<Rect2D> rTree = createRect2DTree(RTree.Split.QUADRATIC);
 
         Rect2D rect = new Rect2D(0,0,2,2);
         rTree.add(rect);
@@ -193,9 +194,10 @@ public class RTreeTest {
         Assert.assertTrue("Tree nulled out and could not add HyperRect back in", rTree.getEntryCount() > 0);
     }
 
-    @Test
+    @Ignore
+    // This test ignored because output needs to be manually evaluated.
     public void treeRemoveAndRebalanceTest() {
-        final RTree<Rect2D> rTree = new RTree<Rect2D>(new Rect2D.Builder(), 2, 8, RTree.SPLIT_TYPE.QUADRATIC);
+        final RTree<Rect2D> rTree = createRect2DTree(RTree.Split.QUADRATIC);
 
         Rect2D[] rect = new Rect2D[65];
         for(int i = 0; i < rect.length; i++){
@@ -230,7 +232,7 @@ public class RTreeTest {
 
     @Test
     public void treeUpdateTest() {
-        final RTree<Rect2D> rTree = new RTree<Rect2D>(new Rect2D.Builder(), 2, 8, RTree.SPLIT_TYPE.QUADRATIC);
+        final RTree<Rect2D> rTree = createRect2DTree(RTree.Split.QUADRATIC);
 
         Rect2D rect = new Rect2D(0, 1, 2, 3);
         rTree.add(rect);
@@ -244,12 +246,12 @@ public class RTreeTest {
         System.out.print(st);
     }
 
-        /**
-         * Generate 'count' random rectangles with fixed ranges.
-         *
-         * @param count - number of rectangles to generate
-         * @return array of generated rectangles
-         */
+    /**
+     * Generate 'count' random rectangles with fixed ranges.
+     *
+     * @param count - number of rectangles to generate
+     * @return array of generated rectangles
+     */
     public static Rect2D[] generateRandomRects(int count) {
         final Random rand = new Random(13);
 
@@ -273,14 +275,13 @@ public class RTreeTest {
         return rects;
     }
 
-
     /**
      * Create a tree capable of holding rectangles with default minM (2) and maxM (8) values.
      *
      * @param splitType - type of leaf to use (affects how full nodes get split)
      * @return tree
      */
-    public static RTree<Rect2D> createRect2DTree(RTree.SPLIT_TYPE splitType) {
+    public static RTree<Rect2D> createRect2DTree(RTree.Split splitType) {
         return createRect2DTree(splitType, 2, 8);
     }
 
@@ -292,7 +293,7 @@ public class RTreeTest {
      * @param maxM - maximum number of entries in each leaf
      * @return tree
      */
-    public static RTree<Rect2D> createRect2DTree(RTree.SPLIT_TYPE splitType, int minM, int maxM) {
+    public static RTree<Rect2D> createRect2DTree(RTree.Split splitType, int minM, int maxM) {
         return new RTree<>(new Rect2D.Builder(), minM, maxM, splitType);
     }
 }

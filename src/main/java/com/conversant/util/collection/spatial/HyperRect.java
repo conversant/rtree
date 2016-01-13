@@ -1,7 +1,7 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 /**
- * An N-d rectangle or "hypercube"
+ * An N dimensional rectangle or "hypercube" that is a representation of a data entry.
  *
  * Created by jcairns on 4/30/15.
  */

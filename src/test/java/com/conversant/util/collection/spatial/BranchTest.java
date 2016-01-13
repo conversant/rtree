@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +14,7 @@ public class BranchTest {
     @Test
     public void branchOptimizationTest() {
 
-        for(RTree.SPLIT_TYPE type : RTree.SPLIT_TYPE.values()) {
+        for(RTree.Split type : RTree.Split.values()) {
             RTree<Rect2D> rTree = RTreeTest.createRect2DTree(type);
             Rect2D[] rects = RTreeTest.generateRandomRects(80);
 

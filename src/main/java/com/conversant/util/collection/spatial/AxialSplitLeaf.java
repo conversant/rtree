@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -13,7 +13,7 @@ import java.util.Comparator;
 final class AxialSplitLeaf<T> extends Leaf<T> {
 
     protected AxialSplitLeaf(final RectBuilder<T> builder, final int mMin, final int mMax) {
-        super(builder, mMin, mMax, RTree.SPLIT_TYPE.AXIAL);
+        super(builder, mMin, mMax, RTree.Split.AXIAL);
     }
 
     @Override

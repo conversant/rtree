@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 /**
  * Guttmann's Linear split
@@ -8,7 +8,7 @@ package com.conversant.util.collection.spatial;
 final class LinearSplitLeaf<T> extends Leaf<T> {
 
     protected LinearSplitLeaf(final RectBuilder<T> builder, final int mMin, final int mMax) {
-        super(builder, mMin, mMax, RTree.SPLIT_TYPE.LINEAR);
+        super(builder, mMin, mMax, RTree.Split.LINEAR);
     }
 
     @Override

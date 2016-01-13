@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 /**
  * Guttmann's Quadratic split
@@ -8,7 +8,7 @@ package com.conversant.util.collection.spatial;
 final class QuadraticSplitLeaf<T> extends Leaf<T> {
 
     protected QuadraticSplitLeaf(final RectBuilder<T> builder, final int mMin, final int mMax) {
-        super(builder, mMin, mMax, RTree.SPLIT_TYPE.QUADRATIC);
+        super(builder, mMin, mMax, RTree.Split.QUADRATIC);
     }
 
     @Override

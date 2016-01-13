@@ -1,25 +1,32 @@
-package com.conversant.util.collection.spatial;
+package com.dotomi.util.collection.spatial;
 
 import java.util.function.Consumer;
 
 /**
+ * <p>Data structure to make range searching more efficient. Indexes multi-dimensional information
+ * such as geographical coordinates or rectangles. Groups information and represents them with a
+ * minimum bounding rectangle (mbr). When searching through the tree, any query that does not
+ * intersect an mbr can ignore any data entries in that mbr.</p>
+ * <p>
+ * <p>More information can be @see <a href="https://en.wikipedia.org/wiki/R-tree">https://en.wikipedia.org/wiki/R-tree</a></p>
+ * <p>
  * Created by jcairns on 4/30/15.
  */
-public final class RTree<T> {
+public final class RTree<T> implements SpatialSearch<T> {
     private static final double EPSILON = 1e-12;
 
     private final int mMin;
     private final int mMax;
     private final RectBuilder<T> builder;
     private Node<T> root;
-    private SPLIT_TYPE splitType;
+    private Split splitType;
     private int entryCount;
 
     public RTree(final RectBuilder<T> builder) {
-        this(builder, 2, 8, SPLIT_TYPE.QUADRATIC);
+        this(builder, 2, 8, Split.AXIAL);
     }
 
-    public RTree(final RectBuilder<T> builder, final int mMin, final int mMax, final SPLIT_TYPE splitType) {
+    public RTree(final RectBuilder<T> builder, final int mMin, final int mMax, final Split splitType) {
         this.mMin = mMin;
         this.mMax = mMax;
         this.builder = builder;
@@ -28,10 +35,39 @@ public final class RTree<T> {
         root = Leaf.create(builder, mMin, mMax, splitType);
     }
 
+
+    @Override
     public int search(final HyperRect rect, final T[] t) {
         return root.search(rect, t, 0);
+
     }
 
+    @Override
+    public void add(final T t) {
+        root = root.add(t);
+        entryCount++;
+    }
+
+    @Override
+    public void remove(final T t) {
+        Node<T> removed = root.remove(t);
+        if (removed != null) {
+            entryCount--;
+        }
+    }
+
+    @Override
+    public void update(final T told, final T tnew) {
+        root.update(told, tnew);
+    }
+
+    /**
+     * returns whether or not the HyperRect will enclose all of the data entries in t
+     *
+     * @param rect HyperRect to contain entries
+     * @param t    Data entries to be evaluated
+     * @return Whether or not all entries lie inside rect
+     */
     public boolean contains(final HyperRect rect, final T[] t) {
         for (int i = 0; i < t.length; i++) {
             if (!rect.contains(builder.getBBox(t[i]))) {
@@ -41,27 +77,19 @@ public final class RTree<T> {
         return true;
     }
 
-    public void add(final T t) {
-        root = root.add(t);
-        entryCount++;
+    /**
+     * @return number of data entries stored in the RTree
+     */
+    public int getEntryCount() {
+        return entryCount;
     }
-
-    public void remove(final T t) {
-        Node<T> removed = root.remove(t);
-        if(removed != null)
-            entryCount--;
-    }
-
-    public void update(final T told, final T tnew) { root.update(told, tnew); }
-
-    public int getEntryCount() { return entryCount; }
 
     final static boolean isEqual(final double a, final double b) {
         return isEqual(a, b, EPSILON);
     }
 
     final static boolean isEqual(final double a, final double b, final double eps) {
-        return Math.abs(a - b) <= ( (Math.abs(a) < Math.abs(b) ? Math.abs(b) : Math.abs(a))*eps);
+        return Math.abs(a - b) <= ((Math.abs(a) < Math.abs(b) ? Math.abs(b) : Math.abs(a)) * eps);
     }
 
     public void forEach(Consumer<T> consumer) {
@@ -91,7 +119,15 @@ public final class RTree<T> {
         return this.root;
     }
 
-    public enum SPLIT_TYPE {
+
+    /**
+     * Different methods for splitting nodes in an RTree.
+     * AXIAL has been shown to give the best performance and should be used
+     * in the AdServer
+     * <p>
+     * Created by ewhite on 10/28/15.
+     */
+    public enum Split {
         AXIAL,
         LINEAR,
         QUADRATIC,
