@@ -88,4 +88,81 @@ public class LockingRTree<T> implements SpatialSearch<T> {
             writeLock.unlock();
         }
     }
+
+    /**
+     * Non-blocking locked search
+     *
+     * @param rect - HyperRect to search
+     * @param t - array to hold results
+     *
+     * @return number of entries found or -1 if lock was not acquired
+     */
+    public int trySearch(HyperRect rect, T[] t) {
+        if(readLock.tryLock()) {
+            try {
+                return rTree.search(rect, t);
+            } finally {
+                readLock.unlock();
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Non-blocking locked add
+     *
+     * @param t - entry to add
+     *
+     * @return true if lock was acquired, false otherwise
+     */
+    public boolean tryAdd(T t) {
+        if(writeLock.tryLock()) {
+            try {
+                rTree.add(t);
+            } finally {
+                writeLock.unlock();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Non-blocking locked remove
+     *
+     * @param t - entry to remove
+     *
+     * @return true if lock was acquired, false otherwise
+     */
+    public boolean tryRemove(T t) {
+        if(writeLock.tryLock()) {
+            try {
+                rTree.remove(t);
+            } finally {
+                writeLock.unlock();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Non-blocking locked update
+     *
+     * @param told - entry to update
+     * @param tnew - entry with new values
+     *
+     * @return true if lock was acquired, false otherwise
+     */
+    public boolean tryUpdate(T told, T tnew) {
+        if(writeLock.tryLock()) {
+            try {
+                rTree.update(told, tnew);
+            } finally {
+                writeLock.unlock();
+            }
+            return true;
+        }
+        return false;
+    }
 }
