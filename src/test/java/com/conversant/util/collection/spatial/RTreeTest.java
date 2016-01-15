@@ -1,6 +1,5 @@
 package com.dotomi.util.collection.spatial;
 
-import com.conversantmedia.util.estimation.Percentile;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -158,69 +157,6 @@ public class RTreeTest {
 
             System.out.println("[" + type + "] searched " + root.searchCount + " nodes, returning " + foundCount + " entries");
             System.out.println("[" + type + "] evaluated " + root.bboxEvalCount + " b-boxes, returning " + foundCount + " entries");
-        }
-    }
-
-    /**
-     * Collect and display timing statistics for insertion into trees with
-     * leaves of each split type.
-     *
-     * Preliminary findings:
-     *  - AXIAL appears to have the fastest 95th percentile for insert.
-     *  - QUADRATIC seems to be not far behind.
-     *  - LINEAR has a relatively bad insert time.
-     */
-    @Ignore
-    // This long-running test ignored because output needs to be manually evaluated.
-    public void treeInsertTimeTest() {
-
-        final int entryCount = 50000;
-        final Rect2D[] rects = RTreeTest.generateRandomRects(entryCount);
-
-        for(RTree.Split type : RTree.Split.values()) {
-            final RTree<Rect2D> rTree = RTreeTest.createRect2DTree(type);
-            final Percentile addTime = new Percentile();
-
-            for (int i = 0; i < rects.length; i++) {
-                final long startTime = System.nanoTime();
-                rTree.add(rects[i]);
-                addTime.add((System.nanoTime() - startTime) / 1e3F);
-            }
-
-            Percentile.print(System.out, "[" + type + "] Add Time (us)", addTime);
-        }
-    }
-
-    /**
-     * Collect and display timing statistics for searching trees with
-     * leaves of each split type.
-     *
-     * Preliminary findings:
-     *  - AXIAL and LINEAR appears to have a similar 95th percentile for search.
-     *  - QUADRATIC seems to be far and away the best.
-     */
-    @Ignore
-    // This long-running test ignored because output needs to be manually evaluated.
-    public void treeSearchTimeTest() {
-
-        final int entryCount = 50000;
-        final Rect2D[] rects = RTreeTest.generateRandomRects(entryCount);
-
-        for(RTree.Split type : RTree.Split.values()) {
-            final RTree<Rect2D> rTree = RTreeTest.createRect2DTree(type);
-            final Percentile searchTime = new Percentile();
-
-            for (int i = 0; i < rects.length; i++) {
-                rTree.add(rects[i]);
-            }
-
-            final Rect2D[] results = new Rect2D[entryCount];
-            for (int i = 0; i < rects.length; i++) {
-                final long startTime = System.nanoTime();
-                Assert.assertTrue(rTree.search(rects[i], results) > 0);
-                searchTime.add((System.nanoTime() - startTime) / 1e3F);
-            }
-            Percentile.print(System.out, "[" + type + "] Search Time (us)", searchTime);
         }
     }
 
