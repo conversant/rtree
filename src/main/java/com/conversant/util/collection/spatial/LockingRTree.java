@@ -1,4 +1,4 @@
-package com.dotomi.util.collection.spatial;
+package com.conversant.util.collection.spatial;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;

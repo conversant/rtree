@@ -1,4 +1,4 @@
-package com.dotomi.util.collection.spatial;
+package com.conversant.util.collection.spatial;
 
 /**
  * N dimensional point used to signify the bounds of a HyperRect
