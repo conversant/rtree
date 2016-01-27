@@ -1,4 +1,4 @@
-package com.dotomi.util.collection.spatial;
+package com.conversant.util.collection.spatial;
 
 import org.junit.Assert;
 import org.junit.Test;
