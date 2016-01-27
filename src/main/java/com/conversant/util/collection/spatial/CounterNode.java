@@ -6,7 +6,7 @@ import java.util.function.Consumer;
  * Created by jcovert on 6/18/15.
  */
 final class CounterNode<T> implements Node<T> {
-    final Node<T> node;
+    private final Node<T> node;
 
     static int searchCount = 0;
     static int bboxEvalCount = 0;

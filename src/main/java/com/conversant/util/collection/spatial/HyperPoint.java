@@ -20,6 +20,7 @@ public interface HyperPoint {
      * @param d - dimension
      *
      * @return value of this point in the dimension
+     * @throws IllegalArgumentException if a non-existent dimension is requested
      */
     <D extends Comparable<D>> D getCoord(int d);
 
@@ -29,6 +30,7 @@ public interface HyperPoint {
      * @param p - point to calculate distance to
      *
      * @return distance to the point
+     * @throws IllegalArgumentException if a non-existent dimension is requested
      */
     double distance(HyperPoint p);
 
