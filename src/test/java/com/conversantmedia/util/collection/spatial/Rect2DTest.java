@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.conversantmedia.util.collection.spatial;
 
 import org.junit.Test;
 import org.junit.Assert;

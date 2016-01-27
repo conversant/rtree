@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.conversantmedia.util.collection.spatial;
 
 /**
  * Created by jcovert on 6/15/15.

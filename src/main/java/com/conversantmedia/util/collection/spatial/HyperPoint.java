@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.conversantmedia.util.collection.spatial;
 
 /**
  * N dimensional point used to signify the bounds of a HyperRect

@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.conversantmedia.util.collection.spatial;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,9 +8,9 @@ import java.util.Random;
 /**
  * Created by jcovert on 6/12/15.
  */
-public class LinearSplitLeafTest {
+public class QuadraticSplitLeafTest {
 
-    private static final RTree.Split TYPE = RTree.Split.LINEAR;
+    private static final RTree.Split TYPE = RTree.Split.QUADRATIC;
 
     /**
      * Adds enough entries to force a single split and confirms that
@@ -110,7 +110,7 @@ public class LinearSplitLeafTest {
 
     /**
      * Adds many random entries to trees of different types and confirms that
-     * no entries are lost during insert/split.
+     * no entries are lost during insertion (and split).
      */
     @Test
     public void randomEntryTest() {
@@ -128,10 +128,11 @@ public class LinearSplitLeafTest {
         stats.print(System.out);
     }
 
+
     /**
-     * This test previously caused a StackOverflowException.
-     * It has since been fixed, but keeping the test to ensure
-     * it doesn't happen again.
+     * This test previously caused a StackOverflowException on LINEAR leaf.
+     * It has since been fixed, but keeping the test here to ensure this leaf type
+     * never falls victim to the same issue.
      */
     @Test
     public void causeLinearSplitOverflow() {
@@ -148,23 +149,4 @@ public class LinearSplitLeafTest {
         final Stats stats = rTree.collectStats();
         stats.print(System.out);
     }
-
-
-    @Test
-    public void causeLinearSplitNiceDist() {
-
-        final RTree<Rect2D> rTree = RTreeTest.createRect2DTree(TYPE, 2, 8);
-        final Random rand = new Random(13);
-        for (int i = 0; i < 500; i++) {
-            final int x1 = rand.nextInt(250);
-            final int y1 = rand.nextInt(250);
-            final int x2 = x1 + rand.nextInt(10);
-            final int y2 = y1 + rand.nextInt(10);
-
-            rTree.add(new Rect2D(x1, y1, x2, y2));
-        }
-        final Stats stats = rTree.collectStats();
-        stats.print(System.out);
-    }
-
 }

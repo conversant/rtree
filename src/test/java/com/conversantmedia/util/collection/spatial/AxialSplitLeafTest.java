@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.conversantmedia.util.collection.spatial;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,9 +8,9 @@ import java.util.Random;
 /**
  * Created by jcovert on 6/12/15.
  */
-public class QuadraticSplitLeafTest {
+public class AxialSplitLeafTest {
 
-    private static final RTree.Split TYPE = RTree.Split.QUADRATIC;
+    private static final RTree.Split TYPE = RTree.Split.AXIAL;
 
     /**
      * Adds enough entries to force a single split and confirms that
@@ -61,14 +61,14 @@ public class QuadraticSplitLeafTest {
 
         Node<Rect2D> child1 = children[0];
         Rect2D child1Mbr = (Rect2D) child1.getRect();
-        Rect2D expectedChild1Mbr = new Rect2D(0, 0, 4, 4);
-        Assert.assertEquals("Child 1 size incorrect after split", 4, child1.size());
+        Rect2D expectedChild1Mbr = new Rect2D(0, 0, 3, 4);
+        Assert.assertEquals("Child 1 size incorrect after split", 3, child1.size());
         Assert.assertEquals("Child 1 mbr incorrect after split", expectedChild1Mbr, child1Mbr);
 
         Node<Rect2D> child2 = children[1];
         Rect2D child2Mbr = (Rect2D) child2.getRect();
-        Rect2D expectedChild2Mbr = new Rect2D(4, 0, 5, 1);
-        Assert.assertEquals("Child 2 size incorrect after split", 1, child2.size());
+        Rect2D expectedChild2Mbr = new Rect2D(2, 0, 5, 4);
+        Assert.assertEquals("Child 2 size incorrect after split", 2, child2.size());
         Assert.assertEquals("Child 2 mbr incorrect after split", expectedChild2Mbr, child2Mbr);
     }
 
@@ -109,8 +109,8 @@ public class QuadraticSplitLeafTest {
     }
 
     /**
-     * Adds many random entries to trees of different types and confirms that
-     * no entries are lost during insertion (and split).
+     * Adds many random entries and confirm that no entries
+     * are lost during insert/split.
      */
     @Test
     public void randomEntryTest() {
@@ -128,7 +128,6 @@ public class QuadraticSplitLeafTest {
         stats.print(System.out);
     }
 
-
     /**
      * This test previously caused a StackOverflowException on LINEAR leaf.
      * It has since been fixed, but keeping the test here to ensure this leaf type
@@ -136,7 +135,7 @@ public class QuadraticSplitLeafTest {
      */
     @Test
     public void causeLinearSplitOverflow() {
-        final RTree<Rect2D> rTree = RTreeTest.createRect2DTree(TYPE, 2, 8);
+        final RTree<Rect2D> rTree = RTreeTest.createRect2DTree(TYPE);
         final Random rand = new Random(13);
         for (int i = 0; i < 500; i++) {
             final int x1 = rand.nextInt(10);
@@ -149,4 +148,6 @@ public class QuadraticSplitLeafTest {
         final Stats stats = rTree.collectStats();
         stats.print(System.out);
     }
+
+
 }

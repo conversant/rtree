@@ -1,4 +1,4 @@
-package com.conversant.util.collection.spatial;
+package com.conversantmedia.util.collection.spatial;
 
 /**
  * An N dimensional rectangle or "hypercube" that is a representation of a data entry.

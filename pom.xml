@@ -8,7 +8,6 @@
   <name>rtree</name>
   <url>https://github.com/conversant/rtree</url>
 
-
   <build>
     <plugins>
       <plugin>
@@ -38,6 +37,7 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
       <version>1.10.19</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
