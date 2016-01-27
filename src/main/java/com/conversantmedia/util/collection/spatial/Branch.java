@@ -234,12 +234,6 @@ final class Branch<T> implements Node<T> {
         }
     }
 
-    private double getCostIncrease(final HyperRect r1, final HyperRect r2) {
-        final double cost1 = r1.cost() + r2.cost();
-        final HyperRect mbr = r1.getMbr(r2);
-        return mbr.cost() - cost1;
-    }
-
     /**
      * Return child nodes of this branch.
      *

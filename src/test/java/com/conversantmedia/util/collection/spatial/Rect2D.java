@@ -101,7 +101,7 @@ public class Rect2D implements HyperRect {
         } else if(d == 1) {
             return max.y - min.y;
         } else {
-            throw new RuntimeException(("Invalid dimension"));
+            throw new IllegalArgumentException("Invalid dimension");
         }
     }
 

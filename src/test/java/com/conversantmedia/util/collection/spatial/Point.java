@@ -43,7 +43,7 @@ public class Point implements HyperPoint {
         } else if(d==1) {
             return y;
         } else {
-            throw new RuntimeException("Invalid dimension");
+            throw new IllegalArgumentException("Invalid dimension");
         }
     }
 
@@ -64,7 +64,7 @@ public class Point implements HyperPoint {
         } else if (d == 1) {
             return Math.abs(p2.y - y);
         } else {
-            throw new RuntimeException("Invalid dimension");
+            throw new IllegalArgumentException("Invalid dimension");
         }
     }
 
