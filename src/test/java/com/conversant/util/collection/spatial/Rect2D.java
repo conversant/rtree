@@ -117,6 +117,16 @@ public class Rect2D implements HyperRect {
     }
 
     @Override
+    public double perimeter() {
+        double p = 0.0;
+        final int nD = this.getNDim();
+        for(int d = 0; d<nD; d++) {
+            p += 2.0 * this.getRange(d);
+        }
+        return p;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

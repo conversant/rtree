@@ -2,7 +2,6 @@ package com.dotomi.util.collection.spatial;
 
 import org.junit.Assert;
 import org.junit.Test;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
@@ -183,7 +182,7 @@ public class LockingRTreeTest {
 
                 @Override
                 public Condition newCondition() {
-                    throw new NotImplementedException();
+                    throw new UnsupportedOperationException();
                 }
             };
         }
@@ -227,7 +226,7 @@ public class LockingRTreeTest {
 
                 @Override
                 public Condition newCondition() {
-                    throw new NotImplementedException();
+                    throw new UnsupportedOperationException();
                 }
             };
         }

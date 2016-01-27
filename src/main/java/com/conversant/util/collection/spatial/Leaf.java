@@ -192,8 +192,8 @@ abstract class Leaf<T> implements Node<T> {
             if(l1MbrCost < l2MbrCost) {
                 l1Node.add(t);
             } else if(RTree.isEqual(l1MbrCost, l2MbrCost)) {
-                final double l1MbrMargin = HyperRect.perimeter(l1Mbr);
-                final double l2MbrMargin = HyperRect.perimeter(l2Mbr);
+                final double l1MbrMargin = l1Mbr.perimeter();
+                final double l2MbrMargin = l2Mbr.perimeter();
                 if(l1MbrMargin < l2MbrMargin) {
                     l1Node.add(t);
                 } else if(RTree.isEqual(l1MbrMargin, l2MbrMargin)) {

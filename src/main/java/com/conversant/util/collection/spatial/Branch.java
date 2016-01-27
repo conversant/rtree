@@ -38,12 +38,13 @@ final class Branch<T> implements Node<T> {
 
             if(mbr != null) {
                 mbr = mbr.getMbr(n.getRect());
-            } else {
+            }
+            else {
                 mbr = n.getRect();
             }
-
             return size - 1;
-        } else {
+        }
+        else {
             throw new RuntimeException("Too many children");
         }
     }
@@ -175,18 +176,19 @@ final class Branch<T> implements Node<T> {
             int bestNode = 0;
             HyperRect childMbr = child[0].getRect().getMbr(tRect);
             double leastEnlargement = childMbr.cost() - (child[0].getRect().cost() + tRect.cost());
-            double leastPerimeter   = HyperRect.perimeter(childMbr);
+            double leastPerimeter   = childMbr.perimeter();
 
             for(int i = 1; i<size; i++) {
                 childMbr = child[i].getRect().getMbr(tRect);
                 final double nodeEnlargement = childMbr.cost() - (child[i].getRect().cost() + tRect.cost());
-                if(nodeEnlargement < leastEnlargement) {
+                if (nodeEnlargement < leastEnlargement) {
                     leastEnlargement = nodeEnlargement;
-                    leastPerimeter  = HyperRect.perimeter(childMbr);
+                    leastPerimeter  = childMbr.perimeter();
                     bestNode = i;
-                } else if(RTree.isEqual(nodeEnlargement, leastEnlargement)) {
-                    final double childPerimeter = HyperRect.perimeter(childMbr);
-                    if(childPerimeter < leastPerimeter) {
+                }
+                else if(RTree.isEqual(nodeEnlargement, leastEnlargement)) {
+                    final double childPerimeter = childMbr.perimeter();
+                    if (childPerimeter < leastPerimeter) {
                         leastEnlargement = nodeEnlargement;
                         leastPerimeter = childPerimeter;
                         bestNode = i;
@@ -194,16 +196,17 @@ final class Branch<T> implements Node<T> {
                 } // else its not the least
 
             }
-
             return bestNode;
-        } else {
+        }
+        else {
             final Node<T> n = Leaf.create(builder, mMin, mMax, splitType);
             n.add(t);
             child[size++] = n;
 
             if(mbr == null) {
                 mbr = n.getRect();
-            } else {
+            }
+            else {
                 mbr = mbr.getMbr(n.getRect());
             }
 

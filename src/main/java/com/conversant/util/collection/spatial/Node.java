@@ -39,23 +39,49 @@ interface Node<T> {
     Node<T> update(T told, T tnew);
 
     /**
-     * Search for rect within node
+     * Search for rect within this node
      *
-     * @param rect
-     * @param t
-     * @param n
-     * @return
+     * @param rect - HyperRect to search for
+     * @param t - array of found results
+     * @param n - total result count so far (from recursive call)
+     * @return result count from search of this node
      */
-
     int search(HyperRect rect, T[] t, int n);
 
+    /**
+     * The number of entries in the node
+     *
+     * @return entry count
+     */
     int size();
 
+    /**
+     * Consumer "accepts" every node in the entire index
+     *
+     * @param consumer
+     */
     void forEach(Consumer<T> consumer);
 
+    /**
+     * Consumer "accepts" every node in the given rect
+     *
+     * @param consumer
+     * @param rect - limiting rect
+     */
     void forEach(Consumer<T> consumer, HyperRect rect);
 
+    /**
+     * Recurses over index collecting stats
+     *
+     * @param stats - Stats object being populated
+     * @param depth - current depth in tree
+     */
     void collectStats(Stats stats, int depth);
 
+    /**
+     * Visits node, wraps it in an instrumented node, (see CounterNode)
+     *
+     * @return instrumented node wrapper
+     */
     Node<T> instrument();
 }

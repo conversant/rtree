@@ -81,16 +81,7 @@ public interface HyperRect<D extends Comparable<D>> {
     /**
      * Calculate the perimeter of this HyperRect - across all dimesnions
      *
-     * @param rect - HyperRect to calculate
-     *
      * @return - perimeter
      */
-    static <D extends Comparable<D>> double perimeter(final HyperRect<D> rect) {
-        double p = 0.0;
-        final int nD = rect.getNDim();
-        for(int d = 0; d<nD; d++) {
-            p += 2.0*rect.getRange(d);
-        }
-        return p;
-    }
+    double perimeter();
 }
