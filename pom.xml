@@ -4,7 +4,7 @@
   <groupId>com.conversantmedia</groupId>
   <artifactId>rtree</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <url>https://github.com/conversant/rtree</url>
   <description>Conversant RTree - N dimensional spatial index</description>
@@ -19,7 +19,6 @@
     <developer>
       <name>John Cairns</name>
       <email>john@2ad.com</email>
-      <email>jcairns@conversantmedia.com</email>
       <organization>Conversant, Inc.</organization>
       <organizationUrl>http://www.conversantmedia.com</organizationUrl>
     </developer>
