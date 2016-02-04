@@ -61,7 +61,7 @@ public class AxialSplitLeafTest {
     @Test
     public void splitCorrectnessTest() {
 
-        RTree<Rect2D> rTree = RTreeTest.createRect2DTree(TYPE, 2, 4);
+        RTree<Rect2D> rTree = RTreeTest.createRect2DTree(2, 4, TYPE);
         rTree.add(new Rect2D(0, 0, 3, 3));
         rTree.add(new Rect2D(1, 1, 2, 2));
         rTree.add(new Rect2D(2, 2, 4, 4));

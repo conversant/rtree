@@ -34,7 +34,7 @@ public class RTreeTest {
     @Test
     public void pointSearchTest() {
 
-        final RTree<Point> pTree = new RTree<>(new Point.Builder());
+        final RTree<Point> pTree = new RTree<>(new Point.Builder(), 2, 8, RTree.Split.AXIAL);
 
         for(int i=0; i<10; i++) {
             pTree.add(new Point(i, i));
@@ -64,7 +64,7 @@ public class RTreeTest {
         final int entryCount = 20;
 
         for (RTree.Split type : RTree.Split.values()) {
-            RTree<Rect2D> rTree = createRect2DTree(type, 2, 8);
+            RTree<Rect2D> rTree = createRect2DTree(2, 8, type);
             for (int i = 0; i < entryCount; i++) {
                 rTree.add(new Rect2D(i, i, i+3, i+3));
             }
@@ -102,7 +102,7 @@ public class RTreeTest {
         final Rect2D[] rects = generateRandomRects(entryCount);
 
         for (RTree.Split type : RTree.Split.values()) {
-            RTree<Rect2D> rTree = createRect2DTree(type, 2, 8);
+            RTree<Rect2D> rTree = createRect2DTree(2, 8, type);
             for (int i = 0; i < rects.length; i++) {
                 rTree.add(rects[i]);
             }
@@ -136,7 +136,7 @@ public class RTreeTest {
 
         final Rect2D[] rects = generateRandomRects(entryCount);
         for (RTree.Split type : RTree.Split.values()) {
-            RTree<Rect2D> rTree = createRect2DTree(type, 2, 8);
+            RTree<Rect2D> rTree = createRect2DTree(2, 8, type);
             for (int i = 0; i < rects.length; i++) {
                 rTree.add(rects[i]);
             }
@@ -162,7 +162,7 @@ public class RTreeTest {
 
         final Rect2D[] rects = generateRandomRects(entryCount);
         for (RTree.Split type : RTree.Split.values()) {
-            RTree<Rect2D> rTree = createRect2DTree(type, 2, 8);
+            RTree<Rect2D> rTree = createRect2DTree(2, 8, type);
             for (int i = 0; i < rects.length; i++) {
                 rTree.add(rects[i]);
             }
@@ -302,18 +302,18 @@ public class RTreeTest {
      * @return tree
      */
     public static RTree<Rect2D> createRect2DTree(RTree.Split splitType) {
-        return createRect2DTree(splitType, 2, 8);
+        return createRect2DTree(2, 8, splitType);
     }
 
     /**
      * Create a tree capable of holding rectangles with specified m and M values.
      *
-     * @param splitType - type of leaf to use (affects how full nodes get split)
      * @param minM - minimum number of entries in each leaf
      * @param maxM - maximum number of entries in each leaf
+     * @param splitType - type of leaf to use (affects how full nodes get split)
      * @return tree
      */
-    public static RTree<Rect2D> createRect2DTree(RTree.Split splitType, int minM, int maxM) {
+    public static RTree<Rect2D> createRect2DTree(int minM, int maxM, RTree.Split splitType) {
         return new RTree<>(new Rect2D.Builder(), minM, maxM, splitType);
     }
 }

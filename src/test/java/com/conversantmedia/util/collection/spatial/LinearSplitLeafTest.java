@@ -61,7 +61,7 @@ public class LinearSplitLeafTest {
     @Test
     public void splitCorrectnessTest() {
 
-        RTree<Rect2D> rTree = RTreeTest.createRect2DTree(TYPE, 2, 4);
+        RTree<Rect2D> rTree = RTreeTest.createRect2DTree(2, 4, TYPE);
         rTree.add(new Rect2D(0, 0, 3, 3));
         rTree.add(new Rect2D(1, 1, 2, 2));
         rTree.add(new Rect2D(2, 2, 4, 4));
@@ -155,7 +155,7 @@ public class LinearSplitLeafTest {
      */
     @Test
     public void causeLinearSplitOverflow() {
-        final RTree<Rect2D> rTree = RTreeTest.createRect2DTree(TYPE, 2, 8);
+        final RTree<Rect2D> rTree = RTreeTest.createRect2DTree(2, 8, TYPE);
         final Random rand = new Random(13);
         for (int i = 0; i < 500; i++) {
             final int x1 = rand.nextInt(10);
@@ -173,7 +173,7 @@ public class LinearSplitLeafTest {
     @Test
     public void causeLinearSplitNiceDist() {
 
-        final RTree<Rect2D> rTree = RTreeTest.createRect2DTree(TYPE, 2, 8);
+        final RTree<Rect2D> rTree = RTreeTest.createRect2DTree(2, 8, TYPE);
         final Random rand = new Random(13);
         for (int i = 0; i < 500; i++) {
             final int x1 = rand.nextInt(250);

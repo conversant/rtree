@@ -39,7 +39,7 @@ public interface HyperRect<D extends Comparable<D>> {
     /**
      * Get number of dimensions used in creating the HyperRect
      *
-     * @return
+     * @return number of dimensions
      */
     int getNDim();
 

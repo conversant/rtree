@@ -51,11 +51,17 @@ public interface SpatialSearch<T> {
     void remove(final T t);
 
     /**
-     * Update entry in tree - performs a remove and an add
+     * Update entry in tree
      *
      * @param told - Entry to update
      * @param tnew - Entry to update it to
      */
     void update(final T told, final T tnew);
 
+    /**
+     * Get the number of entries in the tree
+     *
+     * @return entry count
+     */
+    int getEntryCount();
 }

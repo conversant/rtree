@@ -89,7 +89,7 @@ public class LockingRTreeTest {
         when(lock.readLock()).thenReturn(readLock);
         when(lock.writeLock()).thenReturn(writeLock);
 
-        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(RTree.Split.AXIAL, 2, 8);
+        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
         LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
 
         tree.search(RECT_2_D_0, new Rect2D[0]);
@@ -109,7 +109,7 @@ public class LockingRTreeTest {
         when(lock.readLock()).thenReturn(readLock);
         when(lock.writeLock()).thenReturn(writeLock);
 
-        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(RTree.Split.AXIAL, 2, 8);
+        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
         LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
 
         tree.add(RECT_2_D_0);
@@ -129,7 +129,7 @@ public class LockingRTreeTest {
         when(lock.readLock()).thenReturn(readLock);
         when(lock.writeLock()).thenReturn(writeLock);
 
-        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(RTree.Split.AXIAL, 2, 8);
+        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
         LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
 
         tree.remove(RECT_2_D_0);
@@ -149,7 +149,7 @@ public class LockingRTreeTest {
         when(lock.readLock()).thenReturn(readLock);
         when(lock.writeLock()).thenReturn(writeLock);
 
-        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(RTree.Split.AXIAL, 2, 8);
+        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
         LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
 
         tree.update(RECT_2_D_0, RECT_2_D_1);
@@ -282,6 +282,11 @@ public class LockingRTreeTest {
         public void update(Object told, Object tnew) {
             Assert.assertEquals("Read lock should have no readers while write in progress", lock.readers, 0);
             Assert.assertTrue("Attempting to write without write lock", lock.isLocked);
+        }
+
+        @Override
+        public int getEntryCount() {
+            return 0;
         }
     }
 }
