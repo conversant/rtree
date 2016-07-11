@@ -69,7 +69,7 @@ public interface HyperRect<D extends Comparable<D>> {
      *
      * @param d - dimension to calculate
      *
-     * @return
+     * @return double - the numeric range of the dimention (min - max)
      */
     double getRange(final int d);
 

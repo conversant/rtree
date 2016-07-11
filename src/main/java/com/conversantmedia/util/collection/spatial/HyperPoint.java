@@ -39,7 +39,9 @@ public interface HyperPoint {
      *
      * @param d - dimension
      *
-     * @return value of this point in the dimension
+     * @param <D> - A comparable coordinate 
+     *
+     * @return D - value of this point in the dimension
      * @throws IllegalArgumentException if a non-existent dimension is requested
      */
     <D extends Comparable<D>> D getCoord(int d);

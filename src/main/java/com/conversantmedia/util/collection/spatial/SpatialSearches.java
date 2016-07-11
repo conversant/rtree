@@ -39,6 +39,9 @@ public class SpatialSearches {
      * Create an R-Tree with default values for m, M, and split type
      *
      * @param builder - Builder implementation used to create HyperRects out of T's
+     * @param <T> - The store type of the bound
+     *
+     * @return SpatialSearch - The spatial search and index structure
      */
     public static <T> SpatialSearch<T> rTree(final RectBuilder<T> builder) {
         return new RTree<>(builder, DEFAULT_MIN_M, DEFAULT_MAX_M, DEFAULT_SPLIT_TYPE);
@@ -51,6 +54,9 @@ public class SpatialSearches {
      * @param minM - minimum number of entries per node of this tree
      * @param maxM - maximum number of entries per node of this tree (exceeding this causes node split)
      * @param splitType - type of split to use when M+1 entries are added to a node
+     * @param <T> - The store type of the bound
+     *
+     * @return SpatialSearch - The spatial search and index structure
      */
     public static <T> SpatialSearch<T> rTree(final RectBuilder<T> builder, final int minM, final int maxM, final RTree.Split splitType) {
         return new RTree<>(builder, minM, maxM, splitType);
@@ -60,6 +66,9 @@ public class SpatialSearches {
      * Create a protected R-Tree with default values for m, M, and split type
      *
      * @param builder - Builder implementation used to create HyperRects out of T's
+     * @param <T> - The store type of the bound
+     *
+     * @return SpatialSearch - The spatial search and index structure
      */
     public static <T> SpatialSearch<T> lockingRTree(final RectBuilder<T> builder) {
         return new LockingRTree<>(rTree(builder), new ReentrantReadWriteLock(true));
@@ -72,6 +81,9 @@ public class SpatialSearches {
      * @param minM - minimum number of entries per node of this tree
      * @param maxM - maximum number of entries per node of this tree (exceeding this causes node split)
      * @param splitType - type of split to use when M+1 entries are added to a node
+     * @param <T> - The store type of the bound
+     *
+     * @return SpatialSearch - The spatial search and index structure
      */
     public static <T> SpatialSearch<T> lockingRTree(final RectBuilder<T> builder, final int minM, final int maxM, final RTree.Split splitType) {
         return new LockingRTree<>(rTree(builder, minM, maxM, splitType), new ReentrantReadWriteLock(true));
