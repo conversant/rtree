@@ -11,8 +11,8 @@
   <inceptionYear>2015</inceptionYear>
 
   <organization>
-    <name>Conversant</name>
-    <url>http://www.conversantmedia.com</url>
+    <name>Conversant Engineering</name>
+    <url>http://engineering.conversantmedia.com</url>
   </organization>
 
   <developers>
@@ -20,21 +20,21 @@
       <name>John Cairns</name>
       <email>john@2ad.com</email>
       <organization>Conversant, Inc.</organization>
-      <organizationUrl>http://www.conversantmedia.com</organizationUrl>
+      <organizationUrl>http://engineering.conversantmedia.com</organizationUrl>
     </developer>
 
     <developer>
       <name>Jim Covert</name>
       <email>covert.james@gmail.com</email>
       <organization>Conversant, Inc.</organization>
-      <organizationUrl>http://www.conversantmedia.com</organizationUrl>
+      <organizationUrl>http://engineering.conversantmedia.com</organizationUrl>
     </developer>
 
     <developer>
       <name>Evan White</name>
       <email>ewhite1@conversantmedia.com</email>
       <organization>Conversant, Inc.</organization>
-      <organizationUrl>http://www.conversantmedia.com</organizationUrl>
+      <organizationUrl>http://engineering.conversantmedia.com</organizationUrl>
     </developer>
   </developers>
 
