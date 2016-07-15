@@ -20,6 +20,8 @@ package com.conversantmedia.util.collection.spatial;
  * #L%
  */
 
+import java.util.function.Consumer;
+
 /**
  * Created by jcovert on 12/30/15.
  */
@@ -64,4 +66,10 @@ public interface SpatialSearch<T> {
      * @return entry count
      */
     int getEntryCount();
+
+    void forEach(Consumer<T> consumer);
+    void forEach(Consumer<T> consumer, HyperRect rect);
+
+    Stats collectStats();
+
 }

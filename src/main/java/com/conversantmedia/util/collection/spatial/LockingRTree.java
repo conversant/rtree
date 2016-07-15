@@ -22,6 +22,7 @@ package com.conversantmedia.util.collection.spatial;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.function.Consumer;
 
 /**
  * Created by jcovert on 12/30/15.
@@ -186,5 +187,35 @@ public class LockingRTree<T> implements SpatialSearch<T> {
     @Override
     public int getEntryCount() {
         return rTree.getEntryCount();
+    }
+
+    @Override
+    public void forEach(Consumer<T> consumer) {
+        readLock.lock();
+        try {
+            rTree.forEach(consumer);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    @Override
+    public void forEach(Consumer<T> consumer, HyperRect rect) {
+        readLock.lock();
+        try {
+            rTree.forEach(consumer, rect);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    @Override
+    public Stats collectStats() {
+        readLock.lock();
+        try {
+            return rTree.collectStats();
+        } finally {
+            readLock.unlock();
+        }
     }
 }

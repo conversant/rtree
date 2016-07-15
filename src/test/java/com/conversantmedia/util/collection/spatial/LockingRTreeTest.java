@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.*;
+import java.util.function.Consumer;
 
 import static org.mockito.Mockito.*;
 
@@ -287,6 +288,21 @@ public class LockingRTreeTest {
         @Override
         public int getEntryCount() {
             return 0;
+        }
+
+        @Override
+        public void forEach(Consumer consumer) {
+            
+        }
+
+        @Override
+        public void forEach(Consumer consumer, HyperRect rect) {
+
+        }
+
+        @Override
+        public Stats collectStats() {
+            return null;
         }
     }
 }
