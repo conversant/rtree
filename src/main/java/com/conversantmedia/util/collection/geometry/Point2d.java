@@ -1,4 +1,4 @@
-package com.conversantmedia.util.collection.spatial;
+package com.conversantmedia.util.collection.geometry;
 
 /*
  * #%L
@@ -20,13 +20,20 @@ package com.conversantmedia.util.collection.spatial;
  * #L%
  */
 
+import com.conversantmedia.util.collection.spatial.HyperPoint;
+import com.conversantmedia.util.collection.spatial.HyperRect;
+import com.conversantmedia.util.collection.spatial.RectBuilder;
+
 /**
  * Created by jcovert on 6/15/15.
  */
-public class Point implements HyperPoint {
+public final class Point2d implements HyperPoint {
+    public static final int X = 0;
+    public static final int Y = 1;
+
     final double x, y;
 
-    Point(final double x, final double y) {
+    public Point2d(final double x, final double y) {
         this.x = x;
         this.y = y;
     }
@@ -38,9 +45,9 @@ public class Point implements HyperPoint {
 
     @Override
     public Double getCoord(final int d) {
-        if(d==0) {
+        if(d==X) {
             return x;
-        } else if(d==1) {
+        } else if(d==Y) {
             return y;
         } else {
             throw new IllegalArgumentException("Invalid dimension");
@@ -49,7 +56,7 @@ public class Point implements HyperPoint {
 
     @Override
     public double distance(final HyperPoint p) {
-        final Point p2 = (Point)p;
+        final Point2d p2 = (Point2d)p;
 
         final double dx = p2.x-x;
         final double dy = p2.y-y;
@@ -58,28 +65,28 @@ public class Point implements HyperPoint {
 
     @Override
     public double distance(final HyperPoint p, final int d) {
-        final Point p2 = (Point)p;
-        if(d == 0) {
+        final Point2d p2 = (Point2d)p;
+        if(d == X) {
             return Math.abs(p2.x - x);
-        } else if (d == 1) {
+        } else if (d == Y) {
             return Math.abs(p2.y - y);
         } else {
             throw new IllegalArgumentException("Invalid dimension");
         }
     }
 
-    public final static class Builder implements RectBuilder<Point> {
+    public final static class Builder implements RectBuilder<Point2d> {
 
         @Override
-        public HyperRect getBBox(final Point point) {
-            return new Rect2D(point);
+        public HyperRect getBBox(final Point2d point) {
+            return new Rect2d(point);
         }
 
         @Override
         public HyperRect getMbr(final HyperPoint p1, final HyperPoint p2) {
-            final Point point1 = (Point)p1;
-            final Point point2 = (Point)p2;
-            return new Rect2D(point1, point2);
+            final Point2d point1 = (Point2d)p1;
+            final Point2d point2 = (Point2d)p2;
+            return new Rect2d(point1, point2);
         }
     }
 }

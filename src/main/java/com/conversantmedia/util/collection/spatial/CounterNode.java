@@ -41,8 +41,8 @@ final class CounterNode<T> implements Node<T> {
     }
 
     @Override
-    public HyperRect getRect() {
-        return this.node.getRect();
+    public HyperRect getBound() {
+        return this.node.getBound();
     }
 
     @Override
@@ -74,8 +74,8 @@ final class CounterNode<T> implements Node<T> {
     }
 
     @Override
-    public void forEach(Consumer<T> consumer, HyperRect rect) {
-        this.node.forEach(consumer, rect);
+    public void search(HyperRect rect, Consumer<T> consumer) {
+        this.node.search(rect, consumer);
     }
 
     @Override

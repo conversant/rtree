@@ -20,6 +20,8 @@ package com.conversantmedia.util.collection.spatial;
  * #L%
  */
 
+import com.conversantmedia.util.collection.geometry.Point2d;
+import com.conversantmedia.util.collection.geometry.Rect2d;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,23 +36,23 @@ public class RTreeTest {
     @Test
     public void pointSearchTest() {
 
-        final RTree<Point> pTree = new RTree<>(new Point.Builder(), 2, 8, RTree.Split.AXIAL);
+        final RTree<Point2d> pTree = new RTree<>(new Point2d.Builder(), 2, 8, RTree.Split.AXIAL);
 
         for(int i=0; i<10; i++) {
-            pTree.add(new Point(i, i));
+            pTree.add(new Point2d(i, i));
         }
 
-        final Rect2D rect = new Rect2D(new Point(2,2), new Point(8,8));
-        final Point[] result = new Point[10];
+        final Rect2d rect = new Rect2d(new Point2d(2,2), new Point2d(8,8));
+        final Point2d[] result = new Point2d[10];
 
         final int n = pTree.search(rect, result);
         Assert.assertEquals(7, n);
 
         for(int i=0; i<n; i++) {
-            Assert.assertTrue(result[i].x >= 2);
-            Assert.assertTrue(result[i].x <= 8);
-            Assert.assertTrue(result[i].y >= 2);
-            Assert.assertTrue(result[i].y <= 8);
+            Assert.assertTrue(result[i].getCoord(Point2d.X) >= 2);
+            Assert.assertTrue(result[i].getCoord(Point2d.X) <= 8);
+            Assert.assertTrue(result[i].getCoord(Point2d.Y) >= 2);
+            Assert.assertTrue(result[i].getCoord(Point2d.Y) <= 8);
         }
     }
 
@@ -64,13 +66,13 @@ public class RTreeTest {
         final int entryCount = 20;
 
         for (RTree.Split type : RTree.Split.values()) {
-            RTree<Rect2D> rTree = createRect2DTree(2, 8, type);
+            RTree<Rect2d> rTree = createRect2DTree(2, 8, type);
             for (int i = 0; i < entryCount; i++) {
-                rTree.add(new Rect2D(i, i, i+3, i+3));
+                rTree.add(new Rect2d(i, i, i+3, i+3));
             }
 
-            final Rect2D searchRect = new Rect2D(5, 5, 10, 10);
-            Rect2D[] results = new Rect2D[entryCount];
+            final Rect2d searchRect = new Rect2d(5, 5, 10, 10);
+            Rect2d[] results = new Rect2d[entryCount];
 
             final int foundCount = rTree.search(searchRect, results);
             int resultCount = 0;
@@ -86,7 +88,10 @@ public class RTreeTest {
 
             // If the order of nodes in the tree changes, this test may fail while returning the correct results.
             for (int i = 0; i < resultCount; i++) {
-                Assert.assertTrue("Unexpected result found", results[i].min.x == i + 2 && results[i].min.y == i + 2 && results[i].max.x == i + 5 && results[i].max.y == i + 5);
+                Assert.assertTrue("Unexpected result found", RTree.isEqual(results[i].getMin().getCoord(Point2d.X), i + 2) &&
+                        RTree.isEqual(results[i].getMin().getCoord(Point2d.Y),  i + 2) &&
+                        RTree.isEqual(results[i].getMax().getCoord(Point2d.X), i + 5) &&
+                        RTree.isEqual(results[i].getMax().getCoord(Point2d.Y), i + 5));
             }
         }
     }
@@ -99,16 +104,16 @@ public class RTreeTest {
     public void rect2DSearchAllTest() {
 
         final int entryCount = 10000;
-        final Rect2D[] rects = generateRandomRects(entryCount);
+        final Rect2d[] rects = generateRandomRects(entryCount);
 
         for (RTree.Split type : RTree.Split.values()) {
-            RTree<Rect2D> rTree = createRect2DTree(2, 8, type);
+            RTree<Rect2d> rTree = createRect2DTree(2, 8, type);
             for (int i = 0; i < rects.length; i++) {
                 rTree.add(rects[i]);
             }
 
-            final Rect2D searchRect = new Rect2D(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
-            Rect2D[] results = new Rect2D[entryCount];
+            final Rect2d searchRect = new Rect2d(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
+            Rect2d[] results = new Rect2d[entryCount];
 
             final int foundCount = rTree.search(searchRect, results);
             int resultCount = 0;
@@ -134,9 +139,9 @@ public class RTreeTest {
 
         final int entryCount = 50_000;
 
-        final Rect2D[] rects = generateRandomRects(entryCount);
+        final Rect2d[] rects = generateRandomRects(entryCount);
         for (RTree.Split type : RTree.Split.values()) {
-            RTree<Rect2D> rTree = createRect2DTree(2, 8, type);
+            RTree<Rect2d> rTree = createRect2DTree(2, 8, type);
             for (int i = 0; i < rects.length; i++) {
                 rTree.add(rects[i]);
             }
@@ -160,20 +165,20 @@ public class RTreeTest {
 
         final int entryCount = 5000;
 
-        final Rect2D[] rects = generateRandomRects(entryCount);
+        final Rect2d[] rects = generateRandomRects(entryCount);
         for (RTree.Split type : RTree.Split.values()) {
-            RTree<Rect2D> rTree = createRect2DTree(2, 8, type);
+            RTree<Rect2d> rTree = createRect2DTree(2, 8, type);
             for (int i = 0; i < rects.length; i++) {
                 rTree.add(rects[i]);
             }
 
             rTree.instrumentTree();
 
-            final Rect2D searchRect = new Rect2D(100, 100, 120, 120);
-            Rect2D[] results = new Rect2D[entryCount];
+            final Rect2d searchRect = new Rect2d(100, 100, 120, 120);
+            Rect2d[] results = new Rect2d[entryCount];
             int foundCount = rTree.search(searchRect, results);
 
-            CounterNode<Rect2D> root = (CounterNode<Rect2D>) rTree.getRoot();
+            CounterNode<Rect2d> root = (CounterNode<Rect2d>) rTree.getRoot();
 
             System.out.println("[" + type + "] searched " + root.searchCount + " nodes, returning " + foundCount + " entries");
             System.out.println("[" + type + "] evaluated " + root.bboxEvalCount + " b-boxes, returning " + foundCount + " entries");
@@ -182,30 +187,30 @@ public class RTreeTest {
 
     @Test
     public void treeRemovalTest() {
-        final RTree<Rect2D> rTree = createRect2DTree(RTree.Split.QUADRATIC);
+        final RTree<Rect2d> rTree = createRect2DTree(RTree.Split.QUADRATIC);
 
-        Rect2D[] rects = new Rect2D[1000];
+        Rect2d[] rects = new Rect2d[1000];
         for(int i = 0; i < rects.length; i++){
-            rects[i] = new Rect2D(i, i, i+1, i+1);
+            rects[i] = new Rect2d(i, i, i+1, i+1);
             rTree.add(rects[i]);
         }
         for(int i = 0; i < rects.length; i++) {
             rTree.remove(rects[i]);
         }
-        Rect2D[] searchResults = new Rect2D[10];
+        Rect2d[] searchResults = new Rect2d[10];
         for(int i = 0; i < rects.length; i++) {
             Assert.assertTrue("Found hyperRect that should have been removed on search " + i, rTree.search(rects[i], searchResults) == 0);
         }
 
-        rTree.add(new Rect2D(0,0,5,5));
+        rTree.add(new Rect2d(0,0,5,5));
         Assert.assertTrue("Found hyperRect that should have been removed on search ", rTree.getEntryCount() != 0);
     }
 
     @Test
     public void treeSingleRemovalTest() {
-        final RTree<Rect2D> rTree = createRect2DTree(RTree.Split.QUADRATIC);
+        final RTree<Rect2d> rTree = createRect2DTree(RTree.Split.QUADRATIC);
 
-        Rect2D rect = new Rect2D(0,0,2,2);
+        Rect2d rect = new Rect2d(0,0,2,2);
         rTree.add(rect);
         Assert.assertTrue("Did not add HyperRect to Tree", rTree.getEntryCount() > 0);
         rTree.remove(rect);
@@ -217,26 +222,26 @@ public class RTreeTest {
     @Ignore
     // This test ignored because output needs to be manually evaluated.
     public void treeRemoveAndRebalanceTest() {
-        final RTree<Rect2D> rTree = createRect2DTree(RTree.Split.QUADRATIC);
+        final RTree<Rect2d> rTree = createRect2DTree(RTree.Split.QUADRATIC);
 
-        Rect2D[] rect = new Rect2D[65];
+        Rect2d[] rect = new Rect2d[65];
         for(int i = 0; i < rect.length; i++){
-            if(i < 4){ rect[i] = new Rect2D(0,0,1,1); }
-            else if(i < 8) { rect[i] = new Rect2D(2, 2, 4, 4); }
-            else if(i < 12) { rect[i] = new Rect2D(4,4,5,5); }
-            else if(i < 16) { rect[i] = new Rect2D(5,5,6,6); }
-            else if(i < 20) { rect[i] = new Rect2D(6,6,7,7); }
-            else if(i < 24) { rect[i] = new Rect2D(7,7,8,8); }
-            else if(i < 28) { rect[i] = new Rect2D(8,8,9,9); }
-            else if(i < 32) { rect[i] = new Rect2D(9,9,10,10); }
-            else if(i < 36) { rect[i] = new Rect2D(2,2,4,4); }
-            else if(i < 40) { rect[i] = new Rect2D(4,4,5,5); }
-            else if(i < 44) { rect[i] = new Rect2D(5,5,6,6); }
-            else if(i < 48) { rect[i] = new Rect2D(6,6,7,7); }
-            else if(i < 52) { rect[i] = new Rect2D(7,7,8,8); }
-            else if(i < 56) { rect[i] = new Rect2D(8,8,9,9); }
-            else if(i < 60) { rect[i] = new Rect2D(9,9,10,10); }
-            else if(i < 65) { rect[i] = new Rect2D(1,1,2,2); }
+            if(i < 4){ rect[i] = new Rect2d(0,0,1,1); }
+            else if(i < 8) { rect[i] = new Rect2d(2, 2, 4, 4); }
+            else if(i < 12) { rect[i] = new Rect2d(4,4,5,5); }
+            else if(i < 16) { rect[i] = new Rect2d(5,5,6,6); }
+            else if(i < 20) { rect[i] = new Rect2d(6,6,7,7); }
+            else if(i < 24) { rect[i] = new Rect2d(7,7,8,8); }
+            else if(i < 28) { rect[i] = new Rect2d(8,8,9,9); }
+            else if(i < 32) { rect[i] = new Rect2d(9,9,10,10); }
+            else if(i < 36) { rect[i] = new Rect2d(2,2,4,4); }
+            else if(i < 40) { rect[i] = new Rect2d(4,4,5,5); }
+            else if(i < 44) { rect[i] = new Rect2d(5,5,6,6); }
+            else if(i < 48) { rect[i] = new Rect2d(6,6,7,7); }
+            else if(i < 52) { rect[i] = new Rect2d(7,7,8,8); }
+            else if(i < 56) { rect[i] = new Rect2d(8,8,9,9); }
+            else if(i < 60) { rect[i] = new Rect2d(9,9,10,10); }
+            else if(i < 65) { rect[i] = new Rect2d(1,1,2,2); }
         }
         for(int i = 0; i < rect.length; i++){
             rTree.add(rect[i]);
@@ -252,14 +257,14 @@ public class RTreeTest {
 
     @Test
     public void treeUpdateTest() {
-        final RTree<Rect2D> rTree = createRect2DTree(RTree.Split.QUADRATIC);
+        final RTree<Rect2d> rTree = createRect2DTree(RTree.Split.QUADRATIC);
 
-        Rect2D rect = new Rect2D(0, 1, 2, 3);
+        Rect2d rect = new Rect2d(0, 1, 2, 3);
         rTree.add(rect);
-        Rect2D oldRect = new Rect2D(0,1,2,3);
-        Rect2D newRect = new Rect2D(1,2,3,4);
+        Rect2d oldRect = new Rect2d(0,1,2,3);
+        Rect2d newRect = new Rect2d(1,2,3,4);
         rTree.update(oldRect, newRect);
-        Rect2D[] results = new Rect2D[2];
+        Rect2d[] results = new Rect2d[2];
         int num = rTree.search(newRect, results);
         Assert.assertTrue("Did not find the updated HyperRect", num == 1);
         String st = results[0].toString();
@@ -272,7 +277,7 @@ public class RTreeTest {
      * @param count - number of rectangles to generate
      * @return array of generated rectangles
      */
-    public static Rect2D[] generateRandomRects(int count) {
+    public static Rect2d[] generateRandomRects(int count) {
         final Random rand = new Random(13);
 
         // changing these values changes the rectangle sizes and consequently the distribution density
@@ -283,13 +288,13 @@ public class RTreeTest {
 
         final double hitProb = 1.0 * count * maxXRange * maxYRange / (minX * minY);
 
-        final Rect2D[] rects = new Rect2D[count];
+        final Rect2d[] rects = new Rect2d[count];
         for (int i = 0; i < count; i++) {
             final int x1 = rand.nextInt(minX);
             final int y1 = rand.nextInt(minY);
             final int x2 = x1 + rand.nextInt(maxXRange);
             final int y2 = y1 + rand.nextInt(maxYRange);
-            rects[i] = new Rect2D(x1, y1, x2, y2);
+            rects[i] = new Rect2d(x1, y1, x2, y2);
         }
 
         return rects;
@@ -301,7 +306,7 @@ public class RTreeTest {
      * @param splitType - type of leaf to use (affects how full nodes get split)
      * @return tree
      */
-    public static RTree<Rect2D> createRect2DTree(RTree.Split splitType) {
+    public static RTree<Rect2d> createRect2DTree(RTree.Split splitType) {
         return createRect2DTree(2, 8, splitType);
     }
 
@@ -313,7 +318,7 @@ public class RTreeTest {
      * @param splitType - type of leaf to use (affects how full nodes get split)
      * @return tree
      */
-    public static RTree<Rect2D> createRect2DTree(int minM, int maxM, RTree.Split splitType) {
-        return new RTree<>(new Rect2D.Builder(), minM, maxM, splitType);
+    public static RTree<Rect2d> createRect2DTree(int minM, int maxM, RTree.Split splitType) {
+        return new RTree<>(new Rect2d.Builder(), minM, maxM, splitType);
     }
 }

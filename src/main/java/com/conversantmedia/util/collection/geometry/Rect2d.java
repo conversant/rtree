@@ -1,4 +1,4 @@
-package com.conversantmedia.util.collection.spatial;
+package com.conversantmedia.util.collection.geometry;
 
 /*
  * #%L
@@ -20,23 +20,28 @@ package com.conversantmedia.util.collection.spatial;
  * #L%
  */
 
+import com.conversantmedia.util.collection.spatial.HyperPoint;
+import com.conversantmedia.util.collection.spatial.HyperRect;
+import com.conversantmedia.util.collection.spatial.RTree;
+import com.conversantmedia.util.collection.spatial.RectBuilder;
+
 /**
  * Created by jcovert on 6/15/15.
  */
-public class Rect2D implements HyperRect {
-    final Point min, max;
+public final class Rect2d implements HyperRect {
+    final Point2d min, max;
 
-    Rect2D(final Point p) {
-        min = new Point(p.x, p.y);
-        max = new Point(p.x, p.y);
+    public Rect2d(final Point2d p) {
+        min = new Point2d(p.x, p.y);
+        max = new Point2d(p.x, p.y);
     }
 
-    Rect2D(final double x1, final double y1, final double x2, final double y2) {
-        min = new Point(x1, y1);
-        max = new Point(x2, y2);
+    public Rect2d(final double x1, final double y1, final double x2, final double y2) {
+        min = new Point2d(x1, y1);
+        max = new Point2d(x2, y2);
     }
 
-    Rect2D(final Point p1, final Point p2) {
+    public Rect2d(final Point2d p1, final Point2d p2) {
         final double minX, minY, maxX, maxY;
 
         if(p1.x < p2.x) {
@@ -55,19 +60,19 @@ public class Rect2D implements HyperRect {
             maxY = p2.y;
         }
 
-        min = new Point(minX, minY);
-        max = new Point(maxX, maxY);
+        min = new Point2d(minX, minY);
+        max = new Point2d(maxX, maxY);
     }
 
     @Override
     public HyperRect getMbr(final HyperRect r) {
-        final Rect2D r2 = (Rect2D)r;
+        final Rect2d r2 = (Rect2d)r;
         final double minX = Math.min(min.x, r2.min.x);
         final double minY = Math.min(min.y, r2.min.y);
         final double maxX = Math.max(max.x, r2.max.x);
         final double maxY = Math.max(max.y, r2.max.y);
 
-        return new Rect2D(minX, minY, maxX, maxY);
+        return new Rect2d(minX, minY, maxX, maxY);
 
     }
 
@@ -81,7 +86,7 @@ public class Rect2D implements HyperRect {
         final double dx = min.x + (max.x - min.x)/2.0;
         final double dy = min.y + (max.y - min.y)/2.0;
 
-        return new Point(dx, dy);
+        return new Point2d(dx, dy);
     }
 
     @Override
@@ -107,7 +112,7 @@ public class Rect2D implements HyperRect {
 
     @Override
     public boolean contains(final HyperRect r) {
-        final Rect2D r2 = (Rect2D)r;
+        final Rect2d r2 = (Rect2d)r;
 
         return min.x <= r2.min.x &&
                 max.x >= r2.max.x &&
@@ -117,7 +122,7 @@ public class Rect2D implements HyperRect {
 
     @Override
     public boolean intersects(final HyperRect r) {
-        final Rect2D r2 = (Rect2D)r;
+        final Rect2d r2 = (Rect2d)r;
 
         if(min.x > r2.max.x ||
                 r2.min.x > max.x ||
@@ -151,12 +156,12 @@ public class Rect2D implements HyperRect {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Rect2D rect2D = (Rect2D) o;
+        Rect2d rect2D = (Rect2d) o;
 
-        return min.x == rect2D.min.x &&
-               max.x == rect2D.max.x &&
-               min.y == rect2D.min.y &&
-               max.y == rect2D.max.y;
+        return RTree.isEqual(min.x, rect2D.min.x) &&
+                RTree.isEqual(max.x, rect2D.max.x) &&
+                RTree.isEqual(min.y, rect2D.min.y) &&
+                RTree.isEqual(max.y, rect2D.max.y);
     }
 
     @Override
@@ -183,16 +188,16 @@ public class Rect2D implements HyperRect {
         return sb.toString();
     }
 
-    public final static class Builder implements RectBuilder<Rect2D> {
+    public final static class Builder implements RectBuilder<Rect2d> {
 
         @Override
-        public HyperRect getBBox(final Rect2D rect2D) {
+        public HyperRect getBBox(final Rect2d rect2D) {
             return rect2D;
         }
 
         @Override
         public HyperRect getMbr(final HyperPoint p1, final HyperPoint p2) {
-            return new Rect2D(p1.getCoord(0), p1.getCoord(1), p2.getCoord(0), p2.getCoord(1));
+            return new Rect2d(p1.getCoord(0), p1.getCoord(1), p2.getCoord(0), p2.getCoord(1));
         }
     }
 }

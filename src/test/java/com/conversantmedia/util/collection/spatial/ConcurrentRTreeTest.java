@@ -20,6 +20,7 @@ package com.conversantmedia.util.collection.spatial;
  * #L%
  */
 
+import com.conversantmedia.util.collection.geometry.Rect2d;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,20 +33,20 @@ import static org.mockito.Mockito.*;
 /**
  * Created by jcovert on 12/30/15.
  */
-public class LockingRTreeTest {
+public class ConcurrentRTreeTest {
 
-    private static final Rect2D RECT_2_D_0 = new Rect2D(0, 0, 0, 0);
-    private static final Rect2D RECT_2_D_1 = new Rect2D(1, 1, 1, 1);
+    private static final Rect2d RECT_2_D_0 = new Rect2d(0, 0, 0, 0);
+    private static final Rect2d RECT_2_D_1 = new Rect2d(1, 1, 1, 1);
 
     @Test
     public void testSearchLocking() {
 
         MockLock lock = new MockLock();
         MockSearch search = new MockSearch(lock);
-        LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
+        ConcurrentRTree<Rect2d> tree = new ConcurrentRTree<>(search, lock);
 
         // asserts proper locking
-        tree.search(RECT_2_D_0, new Rect2D[0]);
+        tree.search(RECT_2_D_0, new Rect2d[0]);
     }
 
     @Test
@@ -53,7 +54,7 @@ public class LockingRTreeTest {
 
         MockLock lock = new MockLock();
         MockSearch search = new MockSearch(lock);
-        LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
+        ConcurrentRTree<Rect2d> tree = new ConcurrentRTree<>(search, lock);
 
         // asserts proper locking
         tree.add(RECT_2_D_0);
@@ -64,7 +65,7 @@ public class LockingRTreeTest {
 
         MockLock lock = new MockLock();
         MockSearch search = new MockSearch(lock);
-        LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
+        ConcurrentRTree<Rect2d> tree = new ConcurrentRTree<>(search, lock);
 
         // asserts proper locking
         tree.remove(RECT_2_D_0);
@@ -75,7 +76,7 @@ public class LockingRTreeTest {
 
         MockLock lock = new MockLock();
         MockSearch search = new MockSearch(lock);
-        LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
+        ConcurrentRTree<Rect2d> tree = new ConcurrentRTree<>(search, lock);
 
         // asserts proper locking
         tree.update(RECT_2_D_0, RECT_2_D_1);
@@ -90,10 +91,10 @@ public class LockingRTreeTest {
         when(lock.readLock()).thenReturn(readLock);
         when(lock.writeLock()).thenReturn(writeLock);
 
-        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
-        LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
+        SpatialSearch<Rect2d> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
+        ConcurrentRTree<Rect2d> tree = new ConcurrentRTree<>(search, lock);
 
-        tree.search(RECT_2_D_0, new Rect2D[0]);
+        tree.search(RECT_2_D_0, new Rect2d[0]);
 
         verify(readLock, times(1)).lock();
         verify(readLock, times(1)).unlock();
@@ -110,8 +111,8 @@ public class LockingRTreeTest {
         when(lock.readLock()).thenReturn(readLock);
         when(lock.writeLock()).thenReturn(writeLock);
 
-        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
-        LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
+        SpatialSearch<Rect2d> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
+        ConcurrentRTree<Rect2d> tree = new ConcurrentRTree<>(search, lock);
 
         tree.add(RECT_2_D_0);
 
@@ -130,8 +131,8 @@ public class LockingRTreeTest {
         when(lock.readLock()).thenReturn(readLock);
         when(lock.writeLock()).thenReturn(writeLock);
 
-        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
-        LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
+        SpatialSearch<Rect2d> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
+        ConcurrentRTree<Rect2d> tree = new ConcurrentRTree<>(search, lock);
 
         tree.remove(RECT_2_D_0);
 
@@ -150,8 +151,8 @@ public class LockingRTreeTest {
         when(lock.readLock()).thenReturn(readLock);
         when(lock.writeLock()).thenReturn(writeLock);
 
-        SpatialSearch<Rect2D> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
-        LockingRTree<Rect2D> tree = new LockingRTree<>(search, lock);
+        SpatialSearch<Rect2d> search = RTreeTest.createRect2DTree(2, 8, RTree.Split.AXIAL);
+        ConcurrentRTree<Rect2d> tree = new ConcurrentRTree<>(search, lock);
 
         tree.update(RECT_2_D_0, RECT_2_D_1);
 
@@ -268,6 +269,12 @@ public class LockingRTreeTest {
         }
 
         @Override
+        public void search(HyperRect rect, Consumer consumer) {
+            Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
+            Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
+        }
+
+        @Override
         public void add(Object o) {
             Assert.assertEquals("Read lock should have no readers while write in progress", lock.readers, 0);
             Assert.assertTrue("Attempting to write without write lock", lock.isLocked);
@@ -293,11 +300,6 @@ public class LockingRTreeTest {
         @Override
         public void forEach(Consumer consumer) {
             
-        }
-
-        @Override
-        public void forEach(Consumer consumer, HyperRect rect) {
-
         }
 
         @Override

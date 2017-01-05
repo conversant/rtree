@@ -35,7 +35,17 @@ public interface SpatialSearch<T> {
      *
      * @return Number of results found
      */
-    int search(final HyperRect rect, final T[] t);
+    int search(HyperRect rect, final T[] t);
+
+    /**
+     * Search for entries intersecting given bounding rect
+     *
+     * @param rect - Bounding rectangle to use for querying
+     * @param consumer - callback to receive intersecting objects
+     *
+     * @return Number of results found
+     */
+    void search(final HyperRect rect, final Consumer<T> consumer);
 
 
     /**
@@ -67,8 +77,12 @@ public interface SpatialSearch<T> {
      */
     int getEntryCount();
 
+    /**
+     * Iterate over all entries in the tree
+     *
+     * @param consumer
+     */
     void forEach(Consumer<T> consumer);
-    void forEach(Consumer<T> consumer, HyperRect rect);
 
     Stats collectStats();
 

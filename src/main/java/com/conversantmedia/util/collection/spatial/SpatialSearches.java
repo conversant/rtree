@@ -71,7 +71,7 @@ public class SpatialSearches {
      * @return SpatialSearch - The spatial search and index structure
      */
     public static <T> SpatialSearch<T> lockingRTree(final RectBuilder<T> builder) {
-        return new LockingRTree<>(rTree(builder), new ReentrantReadWriteLock(true));
+        return new ConcurrentRTree<>(rTree(builder), new ReentrantReadWriteLock(true));
     }
 
     /**
@@ -86,7 +86,7 @@ public class SpatialSearches {
      * @return SpatialSearch - The spatial search and index structure
      */
     public static <T> SpatialSearch<T> lockingRTree(final RectBuilder<T> builder, final int minM, final int maxM, final RTree.Split splitType) {
-        return new LockingRTree<>(rTree(builder, minM, maxM, splitType), new ReentrantReadWriteLock(true));
+        return new ConcurrentRTree<>(rTree(builder, minM, maxM, splitType), new ReentrantReadWriteLock(true));
     }
 
 }

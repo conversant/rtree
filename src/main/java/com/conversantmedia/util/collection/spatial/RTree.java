@@ -57,6 +57,11 @@ public final class RTree<T> implements SpatialSearch<T> {
     }
 
     @Override
+    public void search(HyperRect rect, Consumer<T> consumer) {
+        root.search(rect, consumer);
+    }
+
+    @Override
     public void add(final T t) {
         root = root.add(t);
         entryCount++;
@@ -94,24 +99,22 @@ public final class RTree<T> implements SpatialSearch<T> {
     /**
      * @return number of data entries stored in the RTree
      */
+    @Override
     public int getEntryCount() {
         return entryCount;
     }
 
-    final static boolean isEqual(final double a, final double b) {
+    public static boolean isEqual(final double a, final double b) {
         return isEqual(a, b, EPSILON);
     }
 
-    final static boolean isEqual(final double a, final double b, final double eps) {
+    static boolean isEqual(final double a, final double b, final double eps) {
         return Math.abs(a - b) <= ((Math.abs(a) < Math.abs(b) ? Math.abs(b) : Math.abs(a)) * eps);
     }
 
+    @Override
     public void forEach(Consumer<T> consumer) {
         root.forEach(consumer);
-    }
-
-    public void forEach(Consumer<T> consumer, HyperRect rect) {
-        root.forEach(consumer, rect);
     }
 
     void instrumentTree() {

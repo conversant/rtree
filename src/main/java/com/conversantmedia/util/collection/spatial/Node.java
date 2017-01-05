@@ -34,7 +34,7 @@ interface Node<T> {
     /**
      * @return Rect - the bounding rectangle for this node
      */
-    HyperRect getRect();
+    HyperRect getBound();
 
     /**
      * Add t to the index
@@ -69,6 +69,16 @@ interface Node<T> {
     int search(HyperRect rect, T[] t, int n);
 
     /**
+     * Visitor pattern:
+     *
+     * Consumer "accepts" every node in the given rect
+     *
+     * @param rect - limiting rect
+     * @param consumer
+     */
+    void search(HyperRect rect, Consumer<T> consumer);
+
+    /**
      * The number of entries in the node
      *
      * @return entry count
@@ -81,14 +91,6 @@ interface Node<T> {
      * @param consumer
      */
     void forEach(Consumer<T> consumer);
-
-    /**
-     * Consumer "accepts" every node in the given rect
-     *
-     * @param consumer
-     * @param rect - limiting rect
-     */
-    void forEach(Consumer<T> consumer, HyperRect rect);
 
     /**
      * Recurses over index collecting stats

@@ -137,7 +137,7 @@ abstract class Leaf<T> implements Node<T> {
     }
 
     @Override
-    public HyperRect getRect() {
+    public HyperRect getBound() {
         return mbr;
     }
 
@@ -173,7 +173,7 @@ abstract class Leaf<T> implements Node<T> {
     }
 
     @Override
-    public void forEach(Consumer<T> consumer, HyperRect rect) {
+    public void search(HyperRect rect, Consumer<T> consumer) {
         for(int i = 0; i < size; i++) {
             if(rect.intersects(r[i])) {
                 consumer.accept(entry[i]);
@@ -199,10 +199,10 @@ abstract class Leaf<T> implements Node<T> {
      */
     protected final void classify(final Node<T> l1Node, final Node<T> l2Node, final T t) {
         final HyperRect tRect = builder.getBBox(t);
-        final HyperRect l1Mbr = l1Node.getRect().getMbr(tRect);
-        final HyperRect l2Mbr = l2Node.getRect().getMbr(tRect);
-        final double l1CostInc = Math.max(l1Mbr.cost() - (l1Node.getRect().cost() + tRect.cost()), 0.0);
-        final double l2CostInc = Math.max(l2Mbr.cost() - (l2Node.getRect().cost() + tRect.cost()), 0.0);
+        final HyperRect l1Mbr = l1Node.getBound().getMbr(tRect);
+        final HyperRect l2Mbr = l2Node.getBound().getMbr(tRect);
+        final double l1CostInc = Math.max(l1Mbr.cost() - (l1Node.getBound().cost() + tRect.cost()), 0.0);
+        final double l2CostInc = Math.max(l2Mbr.cost() - (l2Node.getBound().cost() + tRect.cost()), 0.0);
         if(l2CostInc > l1CostInc) {
             l1Node.add(t);
         }

@@ -20,6 +20,7 @@ package com.conversantmedia.util.collection.spatial;
  * #L%
  */
 
+import com.conversantmedia.util.collection.geometry.Rect2d;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -35,8 +36,8 @@ public class BranchTest {
     public void branchOptimizationTest() {
 
         for(RTree.Split type : RTree.Split.values()) {
-            RTree<Rect2D> rTree = RTreeTest.createRect2DTree(type);
-            Rect2D[] rects = RTreeTest.generateRandomRects(80);
+            RTree<Rect2d> rTree = RTreeTest.createRect2DTree(type);
+            Rect2d[] rects = RTreeTest.generateRandomRects(80);
 
             int i = 0;
             // cause no splits, fill up leaf

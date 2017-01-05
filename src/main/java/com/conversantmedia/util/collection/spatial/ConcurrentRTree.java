@@ -27,13 +27,13 @@ import java.util.function.Consumer;
 /**
  * Created by jcovert on 12/30/15.
  */
-public class LockingRTree<T> implements SpatialSearch<T> {
+public class ConcurrentRTree<T> implements SpatialSearch<T> {
 
     private final SpatialSearch<T> rTree;
     private final Lock readLock;
     private final Lock writeLock;
 
-    protected LockingRTree(SpatialSearch<T> rTree, ReadWriteLock lock) {
+    protected ConcurrentRTree(SpatialSearch<T> rTree, ReadWriteLock lock) {
         this.rTree = rTree;
         this.readLock = lock.readLock();
         this.writeLock = lock.writeLock();
@@ -48,7 +48,7 @@ public class LockingRTree<T> implements SpatialSearch<T> {
      * @return number of entries found
      */
     @Override
-    public int search(HyperRect rect, T[] t) {
+    public int search(final HyperRect rect, final T[] t) {
         readLock.lock();
         try {
             return rTree.search(rect, t);
@@ -64,7 +64,7 @@ public class LockingRTree<T> implements SpatialSearch<T> {
      * @param t - entry to add
      */
     @Override
-    public void add(T t) {
+    public void add(final T t) {
         writeLock.lock();
         try {
             rTree.add(t);
@@ -80,7 +80,7 @@ public class LockingRTree<T> implements SpatialSearch<T> {
      * @param t - entry to remove
      */
     @Override
-    public void remove(T t) {
+    public void remove(final T t) {
         writeLock.lock();
         try {
             rTree.remove(t);
@@ -97,7 +97,7 @@ public class LockingRTree<T> implements SpatialSearch<T> {
      * @param tnew - entry with new value
      */
     @Override
-    public void update(T told, T tnew) {
+    public void update(final T told, final T tnew) {
         writeLock.lock();
         try {
             rTree.update(told, tnew);
@@ -115,7 +115,7 @@ public class LockingRTree<T> implements SpatialSearch<T> {
      *
      * @return number of entries found or -1 if lock was not acquired
      */
-    public int trySearch(HyperRect rect, T[] t) {
+    public int trySearch(final HyperRect rect, final T[] t) {
         if(readLock.tryLock()) {
             try {
                 return rTree.search(rect, t);
@@ -190,7 +190,7 @@ public class LockingRTree<T> implements SpatialSearch<T> {
     }
 
     @Override
-    public void forEach(Consumer<T> consumer) {
+    public void forEach(final Consumer<T> consumer) {
         readLock.lock();
         try {
             rTree.forEach(consumer);
@@ -200,10 +200,10 @@ public class LockingRTree<T> implements SpatialSearch<T> {
     }
 
     @Override
-    public void forEach(Consumer<T> consumer, HyperRect rect) {
+    public void search(final HyperRect rect, final Consumer<T> consumer) {
         readLock.lock();
         try {
-            rTree.forEach(consumer, rect);
+            rTree.search(rect, consumer);
         } finally {
             readLock.unlock();
         }
