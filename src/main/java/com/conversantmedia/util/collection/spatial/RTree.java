@@ -27,7 +27,7 @@ import java.util.function.Consumer;
  * such as geographical coordinates or rectangles. Groups information and represents them with a
  * minimum bounding rectangle (mbr). When searching through the tree, any query that does not
  * intersect an mbr can ignore any data entries in that mbr.</p>
- * <p>More information can be @see <a href="https://en.wikipedia.org/wiki/R-tree">https://en.wikipedia.org/wiki/R-tree</a></p>
+ * <p>More information can be found here @see <a href="https://en.wikipedia.org/wiki/R-tree">https://en.wikipedia.org/wiki/R-tree</a></p>
  * <p>
  * Created by jcairns on 4/30/15.</p>
  */
@@ -123,6 +123,7 @@ public final class RTree<T> implements SpatialSearch<T> {
         ((CounterNode<T>) root).bboxEvalCount = 0;
     }
 
+    @Override
     public Stats collectStats() {
         Stats stats = new Stats();
         stats.setType(splitType);

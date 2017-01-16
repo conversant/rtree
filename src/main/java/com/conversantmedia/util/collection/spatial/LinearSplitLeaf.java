@@ -43,7 +43,7 @@ final class LinearSplitLeaf<T> extends Leaf<T> {
         final int nD = r[0].getNDim();
         final int[][][] rIndex = new int[nD][NRANGE][NRANGE];
         // separation between min and max extremes
-        final double   [] separation = new double[nD];
+        final double[] separation = new double[nD];
 
         for(int d = 0; d < nD; d++) {
 

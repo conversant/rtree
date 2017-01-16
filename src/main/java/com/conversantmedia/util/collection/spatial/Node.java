@@ -71,7 +71,7 @@ interface Node<T> {
     /**
      * Visitor pattern:
      *
-     * Consumer "accepts" every node in the given rect
+     * Consumer "accepts" every node intersecting the given rect
      *
      * @param rect - limiting rect
      * @param consumer

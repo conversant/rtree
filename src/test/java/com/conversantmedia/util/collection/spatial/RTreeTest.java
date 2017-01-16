@@ -27,6 +27,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by jcairns on 4/30/15.
@@ -271,13 +272,41 @@ public class RTreeTest {
         System.out.print(st);
     }
 
+    @Test
+    public void testAddsubtreeWithSideTree() {
+        final RTree<Rect2d> rTree = createRect2DTree(3, 6, RTree.Split.QUADRATIC);
+
+        final Rect2d search;
+
+        rTree.add(new Rect2d(2, 2, 4, 4));
+        rTree.add(search = new Rect2d(5, 2, 6, 3));
+
+        // now make sure root node is a branch
+        for(int i=0; i<5; i++) {
+            rTree.add(new Rect2d(3.0 - 1.0/(10.0+i),3.0 - 1.0/(10.0+i), 3.0 + 1.0/(10.0+i),3.0 + 1.0/(10.0+i)));
+        }
+
+        // add subtree/child on first rectangle - fully contained
+        rTree.add(new Rect2d(2.5, 2.5, 3.5, 3.5));
+
+        Assert.assertEquals(8, rTree.getEntryCount());
+
+        final AtomicInteger hitCount = new AtomicInteger();
+        // but 5, 2, 6, 3 must still be found!
+        rTree.search(search, (closure) -> { hitCount.incrementAndGet();});
+
+        Assert.assertEquals(1, hitCount.get());
+
+    }
+
     /**
      * Generate 'count' random rectangles with fixed ranges.
      *
      * @param count - number of rectangles to generate
      * @return array of generated rectangles
      */
-    public static Rect2d[] generateRandomRects(int count) {
+    @Ignore
+    static Rect2d[] generateRandomRects(int count) {
         final Random rand = new Random(13);
 
         // changing these values changes the rectangle sizes and consequently the distribution density
@@ -306,7 +335,8 @@ public class RTreeTest {
      * @param splitType - type of leaf to use (affects how full nodes get split)
      * @return tree
      */
-    public static RTree<Rect2d> createRect2DTree(RTree.Split splitType) {
+    @Ignore
+    static RTree<Rect2d> createRect2DTree(RTree.Split splitType) {
         return createRect2DTree(2, 8, splitType);
     }
 
@@ -318,7 +348,8 @@ public class RTreeTest {
      * @param splitType - type of leaf to use (affects how full nodes get split)
      * @return tree
      */
-    public static RTree<Rect2d> createRect2DTree(int minM, int maxM, RTree.Split splitType) {
+    @Ignore
+    static RTree<Rect2d> createRect2DTree(int minM, int maxM, RTree.Split splitType) {
         return new RTree<>(new Rect2d.Builder(), minM, maxM, splitType);
     }
 }

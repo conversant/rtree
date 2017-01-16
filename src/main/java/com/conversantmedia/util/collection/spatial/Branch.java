@@ -93,7 +93,7 @@ final class Branch<T> implements Node<T> {
                 if(child[i].getBound().contains(tRect)) {
                     child[i] = child[i].add(t);
                     mbr = mbr.getMbr(child[i].getBound());
-                    return child[i];
+                    return this;
                 }
             }
             // no overlapping node - grow

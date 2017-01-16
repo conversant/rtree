@@ -32,7 +32,7 @@ abstract class Leaf<T> implements Node<T> {
     protected final int mMin;       // least number of entries per node
     protected HyperRect mbr;
     protected final HyperRect[] r;
-    protected final T[]    entry;
+    protected final T[]         entry;
     protected final RectBuilder<T> builder;
     protected int size;
     protected RTree.Split splitType;
@@ -62,7 +62,7 @@ abstract class Leaf<T> implements Node<T> {
             entry[size++] = t;
         } else {
             for(int i = 0; i < size; i++){
-                if(entry[i] == null){
+                if(entry[i] == null) {
                     entry[i] = t;
                     r[i] = builder.getBBox(t);
                     mbr = mbr.getMbr(r[i]);
@@ -76,12 +76,12 @@ abstract class Leaf<T> implements Node<T> {
     }
 
     @Override
-    public Node<T> remove(final T t) {
-        for(int i = 0; i < size; i++){
-            if(entry[i].equals(t)){
+    public Node<T> remove(final T t)  {
+        for(int i = 0; i < size; i++) {
+            if(entry[i].equals(t)) {
                 entry[i] = null;
                 r[i] = null;
-                if(i < (size-1)){
+                if(i < (size-1)) {
                     entry[i] = entry[size-1];
                     r[i] = r[size-1];
                     entry[size-1] = null;
@@ -144,20 +144,20 @@ abstract class Leaf<T> implements Node<T> {
     static <R> Node<R> create(final RectBuilder<R> builder, final int mMin, final int M, final RTree.Split splitType) {
 
         switch(splitType) {
-            case AXIAL:
-                return new AxialSplitLeaf<>(builder, mMin, M);
             case LINEAR:
                 return new LinearSplitLeaf<>(builder, mMin, M);
             case QUADRATIC:
                 return new QuadraticSplitLeaf<>(builder, mMin, M);
+            case AXIAL:
             default:
                 return new AxialSplitLeaf<>(builder, mMin, M);
 
         }
+
     }
 
     /**
-     * Splits a lead node that has the maximum number of entries into 2 leaf nodes of the same type with half
+     * Splits a leaf node that has the maximum number of entries into 2 leaf nodes of the same type with half
      * of the entries in each one.
      *
      * @param t entry to be added to the full leaf node
@@ -205,8 +205,7 @@ abstract class Leaf<T> implements Node<T> {
         final double l2CostInc = Math.max(l2Mbr.cost() - (l2Node.getBound().cost() + tRect.cost()), 0.0);
         if(l2CostInc > l1CostInc) {
             l1Node.add(t);
-        }
-        else if(RTree.isEqual(l1CostInc, l2CostInc)) {
+        } else if(RTree.isEqual(l1CostInc, l2CostInc)) {
             final double l1MbrCost = l1Mbr.cost();
             final double l2MbrCost = l2Mbr.cost();
             if(l1MbrCost < l2MbrCost) {
