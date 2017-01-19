@@ -40,20 +40,20 @@ public class ConcurrentRTree<T> implements SpatialSearch<T> {
     }
 
     @Override
-    public int intersect(HyperRect rect, T[] t) {
+    public int intersects(HyperRect rect, T[] t) {
         readLock.lock();
         try {
-            return rTree.intersect(rect, t);
+            return rTree.intersects(rect, t);
         } finally {
             readLock.unlock();
         }
     }
 
     @Override
-    public void intersect(HyperRect rect, Consumer<T> consumer) {
+    public void intersects(HyperRect rect, Consumer<T> consumer) {
         readLock.lock();
         try {
-            rTree.intersect(rect, consumer);
+            rTree.intersects(rect, consumer);
         } finally {
             readLock.unlock();
         }

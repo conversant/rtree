@@ -137,7 +137,7 @@ public final class Rect2d implements HyperRect {
     public double cost() {
         final double dx = max.x - min.x;
         final double dy = max.y - min.y;
-        return Math.abs(dx)*Math.abs(dy);
+        return Math.abs(dx*dy);
     }
 
     @Override

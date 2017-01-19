@@ -28,13 +28,20 @@ import java.util.function.Consumer;
  * Created by jcairns on 4/30/15.
  */
 final class Branch<T> implements Node<T> {
-    private HyperRect mbr;
-    private final Node[] child;
-    private int size;
+
     private final RectBuilder<T> builder;
+
     private final int mMax;
+
     private final int mMin;
+
     private final RTree.Split splitType;
+
+    private final Node[] child;
+
+    private HyperRect mbr;
+
+    private int size;
 
     Branch(final RectBuilder<T> builder, final int mMin, final int mMax, final RTree.Split splitType) {
         this.mMin = mMin;
@@ -58,10 +65,10 @@ final class Branch<T> implements Node<T> {
 
             if(mbr != null) {
                 mbr = mbr.getMbr(n.getBound());
-            }
-            else {
+            } else {
                 mbr = n.getBound();
             }
+
             return size - 1;
         }
         else {
@@ -108,18 +115,7 @@ final class Branch<T> implements Node<T> {
             final int bestLeaf = chooseLeaf(t, tRect);
 
             child[bestLeaf] = child[bestLeaf].add(t);
-
             mbr = mbr.getMbr(child[bestLeaf].getBound());
-
-            // optimize on split to remove the extra created branch when there
-            // is space for the children here
-            if(child[bestLeaf].size() == 2 &&
-                    size < mMax &&
-                    !child[bestLeaf].isLeaf()) {
-                final Branch<T> branch = (Branch<T>)child[bestLeaf];
-                child[bestLeaf] = branch.child[0];
-                child[size++] = branch.child[1];
-            }
 
             return this;
         }
@@ -128,27 +124,32 @@ final class Branch<T> implements Node<T> {
     @Override
     public Node<T> remove(final T t) {
         final HyperRect tRect = builder.getBBox(t);
-        Node<T> returned = null;
+
         for (int i = 0; i < size; i++) {
             if (child[i].getBound().intersects(tRect)) {
                 child[i] = child[i].remove(t);
 
                 if (child[i] == null) {
-                    for (int j = i + 1; j < size; j++) {
-                        child[j - 1] = child[j];
-                    }
+                    System.arraycopy(child, i+1, child, i, size-i-1);
                     size--;
-                } else if (!child[i].isLeaf() && child[i].size() == 1) {
-                    final Branch<T> c = (Branch<T>) child[i];
-                    child[i] = c.child[0];
+                    child[size] = null;
+                    if(size > 0) i--;
                 }
             }
         }
+
         if (size == 0) {
             return null;
         } else if (size == 1) {
+            // unsplit branch
             return child[0];
         }
+
+        mbr = child[0].getBound();
+        for(int i=1; i<size; i++) {
+            mbr = mbr.getMbr(child[i].getBound());
+        }
+
         return this;
     }
 
@@ -302,6 +303,16 @@ final class Branch<T> implements Node<T> {
             child[i].collectStats(stats, depth + 1);
         }
         stats.countBranchAtDepth(depth);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(128);
+        sb.append("BRANCH[");
+        sb.append(mbr);
+        sb.append(']');
+
+        return sb.toString();
     }
 
     @Override

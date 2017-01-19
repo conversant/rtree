@@ -64,7 +64,7 @@ public final class RTree<T> implements SpatialSearch<T> {
     }
 
     @Override
-    public int intersect(final HyperRect rect, final T[] t) {
+    public int intersects(final HyperRect rect, final T[] t) {
         if(root != null) {
             return root.intersects(rect, t, 0);
         }
@@ -72,7 +72,7 @@ public final class RTree<T> implements SpatialSearch<T> {
     }
 
     @Override
-    public void intersect(HyperRect rect, Consumer<T> consumer) {
+    public void intersects(HyperRect rect, Consumer<T> consumer) {
         if(root != null) {
             root.intersects(rect, consumer);
         }
@@ -119,8 +119,8 @@ public final class RTree<T> implements SpatialSearch<T> {
      */
     @Override
     public boolean contains(final T t) {
-        final HyperRect bbox = builder.getBBox(t);
         if(root != null) {
+            final HyperRect bbox = builder.getBBox(t);
             return root.contains(bbox, t);
         }
         return false;
@@ -166,8 +166,9 @@ public final class RTree<T> implements SpatialSearch<T> {
 
     /**
      * Different methods for splitting nodes in an RTree.
-     * AXIAL has been shown to give the best performance and should be used
-     * in the AdServer
+     *
+     * AXIAL has been shown to give good performance for many general spatial problems,
+     *
      * <p>
      * Created by ewhite on 10/28/15.
      */

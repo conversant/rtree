@@ -28,14 +28,22 @@ import java.util.function.Consumer;
  * Created by jcairns on 4/30/15.
  */
 abstract class Leaf<T> implements Node<T> {
+
     protected final int mMax;       // max entries per node
+
     protected final int mMin;       // least number of entries per node
-    protected HyperRect mbr;
+
+    protected final RTree.Split splitType;
+
     protected final HyperRect[] r;
-    protected final T[]         entry;
+
+    protected final T[] entry;
+
     protected final RectBuilder<T> builder;
+
+    protected HyperRect mbr;
+
     protected int size;
-    protected RTree.Split splitType;
 
     protected Leaf(final RectBuilder<T> builder, final int mMin, final int mMax, final RTree.Split splitType) {
         this.mMin = mMin;
@@ -61,14 +69,6 @@ abstract class Leaf<T> implements Node<T> {
             r[size] = tRect;
             entry[size++] = t;
         } else {
-            for(int i = 0; i < size; i++){
-                if(entry[i] == null) {
-                    entry[i] = t;
-                    r[i] = builder.getBBox(t);
-                    mbr = mbr.getMbr(r[i]);
-                    return this;
-                }
-            }
             return split(t);
         }
 
@@ -87,41 +87,41 @@ abstract class Leaf<T> implements Node<T> {
 
         j=i;
 
-        while(j<size && ((entry[i]==t) || entry[j].equals(t))) {
+        while(j<size && ((entry[j]==t) || entry[j].equals(t))) {
             j++;
         }
 
         if(i < j) {
+            final int nRemoved = j-i;
             if (j < size) {
-                r[i] = r[j];
-                entry[i] = entry[j];
-                mbr = r[j];
-                j++;
-                i++;
-                for (; j < size; j++, i++) {
-                    r[i] = r[j];
-                    entry[i] = entry[j];
-                    mbr = mbr.getMbr(r[j]);
-                }
-                size -= j - i;
-                for (; i < j; i++) {
-                    entry[i] = null;
+                final int nRemaining = size-j;
+                System.arraycopy(r, j, r, i, nRemaining);
+                System.arraycopy(entry, j, entry, i, nRemaining);
+                for (int k=size-nRemoved; k < size; k++) {
+                    r[k] = null;
+                    entry[k] = null;
                 }
             } else {
-                if(i>0) {
-                    mbr = r[0];
-                    for(int k=1; k<i; k++) {
-                        mbr = mbr.getMbr(r[k]);
-                    }
-                    size -= j - i;
-                    for (; i < j; i++) {
-                        entry[i] = null;
-                    }
-                } else {
+                if(i==0) {
                     // clean sweep
                     return null;
                 }
+                for (int k=i; k < size; k++) {
+                    r[k] = null;
+                    entry[k] = null;
+                }
             }
+
+            size -= nRemoved;
+
+            for(int k=0; k<size; k++) {
+                if(k==0) {
+                    mbr = r[k];
+                } else {
+                    mbr = mbr.getMbr(r[k]);
+                }
+            }
+
         }
 
         return this;
@@ -130,21 +130,18 @@ abstract class Leaf<T> implements Node<T> {
 
     @Override
     public Node<T> update(final T told, final T tnew) {
-        if(size > 0) {
+        final HyperRect bbox = builder.getBBox(tnew);
 
-            final HyperRect bbox = builder.getBBox(tnew);
+        for(int i=0; i<size; i++) {
+            if (entry[i].equals(told)) {
+                r[i] = bbox;
+                entry[i] = tnew;
+            }
 
-            for(int i=0; i<size; i++) {
-                if(entry[i].equals(told)) {
-                    r[i] = bbox;
-                    entry[i] = tnew;
-                }
-
-                if(i==0) {
-                    mbr = r[i];
-                } else {
-                    mbr = mbr.getMbr(r[i]);
-                }
+            if (i == 0) {
+                mbr = r[i];
+            } else {
+                mbr = mbr.getMbr(r[i]);
             }
         }
 
@@ -313,6 +310,16 @@ abstract class Leaf<T> implements Node<T> {
     }
 
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(128);
+        sb.append(splitType.name());
+        sb.append('[');
+        sb.append(mbr);
+        sb.append(']');
+
+        return sb.toString();
+    }
 
     @Override
     public Node<T> instrument() {

@@ -264,14 +264,14 @@ public class ConcurrentRTreeTest {
         }
 
         @Override
-        public int intersect(HyperRect rect, Object[] t) {
+        public int intersects(HyperRect rect, Object[] t) {
             Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
             Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
             return 0;
         }
 
         @Override
-        public void intersect(HyperRect rect, Consumer consumer) {
+        public void intersects(HyperRect rect, Consumer consumer) {
             Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
             Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
         }

@@ -2,11 +2,11 @@
 
 # Conversant RTree
 
-RTree is a spatial indexing strategy that involves building a tree of bounding boxes that support arbitrary range searches.   RTrees are efficient for geospatial data but can be extended to support any data that is amenable to range search queries.
+RTree is an index that supports building a tree of bounding rectangles for arbitrary range searches.   RTrees are efficient for geospatial data but can be extended to support any data that is amenable to range searching.
 
-Conversant RTree is a hyperdimensional implementation of RTree that supports data with arbitrarily large numbers of orthogonal relations.
+Conversant RTree is a hyper-dimensional (2D, 3D, 4D, nD) implementation of RTrees in Java.  Conversant RTree supports data with large numbers of orthogonal relations or high dimensionality in the same way that traditional RTrees support 2 or 3 dimensional spatial data.
 
-# Conversant R-Tree is on Maven Central
+### Conversant R-Tree is on Maven Central
 
 Maven users can incorporate Conversant R-Tree the usual way.
 
@@ -14,6 +14,6 @@ Maven users can incorporate Conversant R-Tree the usual way.
 <dependency>
   <groupId>com.conversantmedia</groupId>
   <artifactId>rtree</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.3</version>
 </dependency>
 ```

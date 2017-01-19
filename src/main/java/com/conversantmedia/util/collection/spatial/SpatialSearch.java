@@ -34,7 +34,7 @@ public interface SpatialSearch<T> {
      *
      * @return Number of results found
      */
-    int intersect(HyperRect rect, final T[] t);
+    int intersects(HyperRect rect, final T[] t);
 
     /**
      * Search for entries intersecting given bounding rect
@@ -42,9 +42,8 @@ public interface SpatialSearch<T> {
      * @param rect - Bounding rectangle to use for querying
      * @param consumer - callback to receive intersecting objects
      *
-     * @return Number of results found
      */
-    void intersect(final HyperRect rect, final Consumer<T> consumer);
+    void intersects(final HyperRect rect, final Consumer<T> consumer);
 
 
     /**
@@ -63,12 +62,13 @@ public interface SpatialSearch<T> {
      * @param rect - Bounding rectangle to use for querying
      * @param consumer - callback to receive intersecting objects
      *
-     * @return Number of results found
      */
     void search(final HyperRect rect, final Consumer<T> consumer);
 
     /**
      * returns whether or not the HyperRect will enclose all of the data entries in t
+     *
+     * @param t - entry
      *
      * @return boolean - Whether or not all entries lie inside rect
      */

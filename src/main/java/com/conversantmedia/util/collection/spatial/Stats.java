@@ -35,9 +35,9 @@ public class Stats {
     private int branchCount = 0;
     private int leafCount = 0;
     private int entryCount = 0;
-    private int[] entriesAtDepth = new int[10000];
-    private int[] branchesAtDepth = new int[10000];
-    private int[] leavesAtDepth = new int[10000];
+    private int[] entriesAtDepth = new int[1000];
+    private int[] branchesAtDepth = new int[1000];
+    private int[] leavesAtDepth = new int[1000];
 
     public void print(PrintStream out) {
         out.println("[" + type + "] m=" + minFill + " M=" + maxFill);

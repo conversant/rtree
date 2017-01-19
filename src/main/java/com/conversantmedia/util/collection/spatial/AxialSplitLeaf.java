@@ -58,10 +58,7 @@ final class AxialSplitLeaf<T> extends Leaf<T> {
         final int splitDimension = axis;
 
         // sort along split dimension
-        final HyperRect[] sortedMbr = new HyperRect[size];
-        for(int i=0; i<size; i++) {
-            sortedMbr[i] = r[i];
-        }
+        final HyperRect[] sortedMbr = Arrays.copyOf(r, r.length);
 
         Arrays.sort(sortedMbr, new Comparator<HyperRect>() {
             @Override
