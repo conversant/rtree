@@ -83,6 +83,47 @@ public class RTreeTest {
                 }
             }
 
+            final int expectedCount = 3;
+            Assert.assertEquals("[" + type + "] Search returned incorrect search result count - expected: " + expectedCount + " actual: " + foundCount, expectedCount, foundCount);
+            Assert.assertEquals("[" + type + "] Search returned incorrect number of rectangles - expected: " + expectedCount + " actual: " + resultCount, expectedCount, resultCount);
+
+            // If the order of nodes in the tree changes, this test may fail while returning the correct results.
+            for (int i = 0; i < resultCount; i++) {
+                Assert.assertTrue("Unexpected result found", RTree.isEqual(results[i].getMin().getCoord(Point2d.X), i + 5) &&
+                        RTree.isEqual(results[i].getMin().getCoord(Point2d.Y),  i + 5) &&
+                        RTree.isEqual(results[i].getMax().getCoord(Point2d.X), i + 8) &&
+                        RTree.isEqual(results[i].getMax().getCoord(Point2d.Y), i + 8));
+            }
+        }
+    }
+
+
+    /**
+     * Use an small bounding box to ensure that only expected rectangles are returned.
+     * Verifies the count returned from search AND the number of rectangles results.
+     */
+    @Test
+    public void rect2DIntersectTest() {
+
+        final int entryCount = 20;
+
+        for (RTree.Split type : RTree.Split.values()) {
+            RTree<Rect2d> rTree = createRect2DTree(2, 8, type);
+            for (int i = 0; i < entryCount; i++) {
+                rTree.add(new Rect2d(i, i, i+3, i+3));
+            }
+
+            final Rect2d searchRect = new Rect2d(5, 5, 10, 10);
+            Rect2d[] results = new Rect2d[entryCount];
+
+            final int foundCount = rTree.intersect(searchRect, results);
+            int resultCount = 0;
+            for(int i = 0; i < results.length; i++) {
+                if(results[i] != null) {
+                    resultCount++;
+                }
+            }
+
             final int expectedCount = 9;
             Assert.assertEquals("[" + type + "] Search returned incorrect search result count - expected: " + expectedCount + " actual: " + foundCount, expectedCount, foundCount);
             Assert.assertEquals("[" + type + "] Search returned incorrect number of rectangles - expected: " + expectedCount + " actual: " + resultCount, expectedCount, resultCount);
@@ -96,6 +137,8 @@ public class RTreeTest {
             }
         }
     }
+
+
 
     /**
      * Use an enormous bounding box to ensure that every rectangle is returned.
@@ -177,34 +220,103 @@ public class RTreeTest {
 
             final Rect2d searchRect = new Rect2d(100, 100, 120, 120);
             Rect2d[] results = new Rect2d[entryCount];
+            final long start = System.nanoTime();
             int foundCount = rTree.search(searchRect, results);
-
+            final long end = System.nanoTime()-start;
             CounterNode<Rect2d> root = (CounterNode<Rect2d>) rTree.getRoot();
 
             System.out.println("[" + type + "] searched " + root.searchCount + " nodes, returning " + foundCount + " entries");
             System.out.println("[" + type + "] evaluated " + root.bboxEvalCount + " b-boxes, returning " + foundCount + " entries");
+
+            System.out.println("Run was "+end/1000+" us");
         }
     }
 
     @Test
-    public void treeRemovalTest() {
+    public void treeContainsTest() {
         final RTree<Rect2d> rTree = createRect2DTree(RTree.Split.QUADRATIC);
 
-        Rect2d[] rects = new Rect2d[1000];
+        final Rect2d[] rects = new Rect2d[5];
+        for (int i = 0; i < rects.length; i++) {
+            rects[i] = new Rect2d(i, i, i + 1, i + 1);
+            rTree.add(rects[i]);
+        }
+
+        for (int i = 0; i < rects.length; i++) {
+            Assert.assertTrue(rTree.contains(rects[i]));
+        }
+    }
+
+
+    @Test
+    public void treeRemovalTest5Entries() {
+        final RTree<Rect2d> rTree = createRect2DTree(RTree.Split.QUADRATIC);
+
+        final Rect2d[] rects = new Rect2d[5];
         for(int i = 0; i < rects.length; i++){
             rects[i] = new Rect2d(i, i, i+1, i+1);
             rTree.add(rects[i]);
         }
-        for(int i = 0; i < rects.length; i++) {
+
+        for(int i = 1; i < rects.length; i++) {
             rTree.remove(rects[i]);
         }
-        Rect2d[] searchResults = new Rect2d[10];
-        for(int i = 0; i < rects.length; i++) {
-            Assert.assertTrue("Found hyperRect that should have been removed on search " + i, rTree.search(rects[i], searchResults) == 0);
+
+        Rect2d[] searchResults = new Rect2d[5];
+        Assert.assertTrue("Missing hyperRect that should  be found " + rects[0], rTree.contains(rects[0]));
+
+        for(int i = 1; i < rects.length; i++) {
+            Assert.assertFalse("Found hyperRect that should have been removed on search " + rects[i], rTree.contains(rects[i]));
         }
 
-        rTree.add(new Rect2d(0,0,5,5));
-        Assert.assertTrue("Found hyperRect that should have been removed on search ", rTree.getEntryCount() != 0);
+        final Rect2d hr = new Rect2d(0,0,5,5);
+        rTree.add(hr);
+        Assert.assertTrue(rTree.contains(hr));
+        Assert.assertTrue("Found hyperRect that should have been removed on search", rTree.getEntryCount() != 0);
+    }
+
+    @Test
+    public void treeRemovalTestDuplicates() {
+        final RTree<Rect2d> rTree = createRect2DTree(RTree.Split.QUADRATIC);
+
+        final Rect2d[] rect = new Rect2d[2];
+        for(int i = 0; i < rect.length; i++){
+            rect[i] = new Rect2d(i, i, i+1, i+1);
+            rTree.add(rect[i]);
+        }
+
+        for(int i=0; i<2; i++) {
+            rTree.add(rect[1]);
+        }
+
+        for(int i = 0; i < rect.length; i++) {
+            rTree.remove(rect[i]);
+        }
+
+        for(int i = 0; i < rect.length; i++) {
+            Assert.assertFalse("Found hyperRect that should have been removed on search " + rect[i], rTree.contains(rect[i]));
+        }
+    }
+
+    @Test
+    public void treeRemovalTest1000Entries() {
+        final RTree<Rect2d> rTree = createRect2DTree(RTree.Split.QUADRATIC);
+
+        final Rect2d[] rect = new Rect2d[1000];
+        for(int i = 0; i < rect.length; i++){
+            rect[i] = new Rect2d(i, i, i+1, i+1);
+            rTree.add(rect[i]);
+        }
+
+        for(int i = 0; i < rect.length; i++) {
+            rTree.remove(rect[i]);
+        }
+
+        for(int i = 0; i < rect.length; i++) {
+            Assert.assertFalse("Found hyperRect that should have been removed" + rect[i], rTree.contains(rect[i]));
+        }
+
+        Assert.assertFalse("Found hyperRect that should have been removed on search ", rTree.getEntryCount() > 0);
     }
 
     @Test
@@ -266,7 +378,7 @@ public class RTreeTest {
         Rect2d newRect = new Rect2d(1,2,3,4);
         rTree.update(oldRect, newRect);
         Rect2d[] results = new Rect2d[2];
-        int num = rTree.search(newRect, results);
+        final int num = rTree.search(newRect, results);
         Assert.assertTrue("Did not find the updated HyperRect", num == 1);
         String st = results[0].toString();
         System.out.print(st);

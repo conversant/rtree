@@ -26,6 +26,7 @@ import java.util.function.Consumer;
  * Created by jcairns on 4/30/15.
  */
 interface Node<T> {
+
     /**
      * @return boolean - true if this node is a leaf
      */
@@ -71,7 +72,7 @@ interface Node<T> {
     /**
      * Visitor pattern:
      *
-     * Consumer "accepts" every node intersecting the given rect
+     * Consumer "accepts" every node contained by the given rect
      *
      * @param rect - limiting rect
      * @param consumer
@@ -79,11 +80,47 @@ interface Node<T> {
     void search(HyperRect rect, Consumer<T> consumer);
 
     /**
+     * intersect rect with this node
+     *
+     * @param rect - HyperRect to search for
+     * @param t - array of found results
+     * @param n - total result count so far (from recursive call)
+     * @return result count from search of this node
+     */
+    int intersects(HyperRect rect, T[] t, int n);
+
+    /**
+     * Visitor pattern:
+     *
+     * Consumer "accepts" every node intersecting the given rect
+     *
+     * @param rect - limiting rect
+     * @param consumer
+     */
+    void intersects(HyperRect rect, Consumer<T> consumer);
+
+
+    /**
+     *
+     * @param rect
+     * @param t
+     * @return boolean true if subtree contains t
+     */
+    boolean contains(HyperRect rect, T t);
+
+    /**
      * The number of entries in the node
      *
-     * @return entry count
+     * @return int - entry count
      */
     int size();
+
+    /**
+     * The number of entries in the subtree
+     *
+     * @return int - entry count
+     */
+    int totalSize();
 
     /**
      * Consumer "accepts" every node in the entire index
@@ -106,4 +143,5 @@ interface Node<T> {
      * @return instrumented node wrapper
      */
     Node<T> instrument();
+
 }

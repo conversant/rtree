@@ -77,40 +77,104 @@ abstract class Leaf<T> implements Node<T> {
 
     @Override
     public Node<T> remove(final T t)  {
-        for(int i = 0; i < size; i++) {
-            if(entry[i].equals(t)) {
-                entry[i] = null;
-                r[i] = null;
-                if(i < (size-1)) {
-                    entry[i] = entry[size-1];
-                    r[i] = r[size-1];
-                    entry[size-1] = null;
-                    r[size-1] = null;
+
+        int i=0;
+        int j;
+
+        while(i<size && (entry[i]!=t) && (!entry[i].equals(t))) {
+            i++;
+        }
+
+        j=i;
+
+        while(j<size && ((entry[i]==t) || entry[j].equals(t))) {
+            j++;
+        }
+
+        if(i < j) {
+            if (j < size) {
+                r[i] = r[j];
+                entry[i] = entry[j];
+                mbr = r[j];
+                j++;
+                i++;
+                for (; j < size; j++, i++) {
+                    r[i] = r[j];
+                    entry[i] = entry[j];
+                    mbr = mbr.getMbr(r[j]);
                 }
-                size--;
-                if(size > 0) {
+                size -= j - i;
+                for (; i < j; i++) {
+                    entry[i] = null;
+                }
+            } else {
+                if(i>0) {
                     mbr = r[0];
-                    for (i = 1; i < size; i++) {
-                        mbr = mbr.getMbr(r[i]);
+                    for(int k=1; k<i; k++) {
+                        mbr = mbr.getMbr(r[k]);
                     }
+                    size -= j - i;
+                    for (; i < j; i++) {
+                        entry[i] = null;
+                    }
+                } else {
+                    // clean sweep
+                    return null;
                 }
-                return this;
             }
         }
-        return null;
+
+        return this;
+
     }
 
     @Override
     public Node<T> update(final T told, final T tnew) {
+        if(size > 0) {
 
-        remove(told);
-        add(tnew);
+            final HyperRect bbox = builder.getBBox(tnew);
+
+            for(int i=0; i<size; i++) {
+                if(entry[i].equals(told)) {
+                    r[i] = bbox;
+                    entry[i] = tnew;
+                }
+
+                if(i==0) {
+                    mbr = r[i];
+                } else {
+                    mbr = mbr.getMbr(r[i]);
+                }
+            }
+        }
 
         return this;
     }
 
     @Override
     public int search(final HyperRect rect, final T[] t, int n) {
+        final int tLen = t.length;
+        final int n0 = n;
+
+        for(int i=0; i<size && n<tLen; i++) {
+            if(rect.contains(r[i])) {
+                t[n++] = entry[i];
+            }
+        }
+        return n - n0;
+    }
+
+    @Override
+    public void search(HyperRect rect, Consumer<T> consumer) {
+        for(int i = 0; i < size; i++) {
+            if(rect.contains(r[i])) {
+                consumer.accept(entry[i]);
+            }
+        }
+    }
+
+    @Override
+    public int intersects(final HyperRect rect, final T[] t, int n) {
         final int tLen = t.length;
         final int n0 = n;
 
@@ -123,12 +187,22 @@ abstract class Leaf<T> implements Node<T> {
     }
 
     @Override
+    public void intersects(HyperRect rect, Consumer<T> consumer) {
+        for(int i = 0; i < size; i++) {
+            if(rect.intersects(r[i])) {
+                consumer.accept(entry[i]);
+            }
+        }
+    }
+
+    @Override
     public int size() {
         return size;
     }
 
-    public T getEntry(final int dx) {
-        return entry[dx];
+    @Override
+    public int totalSize() {
+        return size;
     }
 
     @Override
@@ -173,12 +247,15 @@ abstract class Leaf<T> implements Node<T> {
     }
 
     @Override
-    public void search(HyperRect rect, Consumer<T> consumer) {
+    public boolean contains(HyperRect rect, T t) {
         for(int i = 0; i < size; i++) {
-            if(rect.intersects(r[i])) {
-                consumer.accept(entry[i]);
+            if(rect.contains(r[i])) {
+                if(entry[i].equals(t)) {
+                    return true;
+                }
             }
         }
+        return false;
     }
 
     @Override
@@ -234,6 +311,8 @@ abstract class Leaf<T> implements Node<T> {
         }
 
     }
+
+
 
     @Override
     public Node<T> instrument() {

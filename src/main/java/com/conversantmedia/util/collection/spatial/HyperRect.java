@@ -74,7 +74,7 @@ public interface HyperRect<D extends Comparable<D>> {
     double getRange(final int d);
 
     /**
-     * Determines if this HyperRect fully contains parameter HyperRect
+     * Determines if this HyperRect fully encloses parameter HyperRect
      *
      * @param r - HyperRect to test
      *
@@ -83,7 +83,7 @@ public interface HyperRect<D extends Comparable<D>> {
     boolean contains(HyperRect r);
 
     /**
-     * Determines if this HyperRect intersects parameter HyperRect
+     * Determines if this HyperRect intersects parameter HyperRect on any axis
      *
      * @param r - HyperRect to test
      *

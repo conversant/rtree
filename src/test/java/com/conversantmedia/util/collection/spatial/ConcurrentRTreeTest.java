@@ -25,7 +25,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.*;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.Consumer;
 
 import static org.mockito.Mockito.*;
@@ -262,6 +264,19 @@ public class ConcurrentRTreeTest {
         }
 
         @Override
+        public int intersect(HyperRect rect, Object[] t) {
+            Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
+            Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
+            return 0;
+        }
+
+        @Override
+        public void intersect(HyperRect rect, Consumer consumer) {
+            Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
+            Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
+        }
+
+        @Override
         public int search(HyperRect rect, Object[] t) {
             Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
             Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
@@ -272,6 +287,13 @@ public class ConcurrentRTreeTest {
         public void search(HyperRect rect, Consumer consumer) {
             Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
             Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
+        }
+
+        @Override
+        public boolean contains(Object o) {
+            Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
+            Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
+            return false;
         }
 
         @Override

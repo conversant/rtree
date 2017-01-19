@@ -22,7 +22,6 @@ package com.conversantmedia.util.collection.geometry;
 
 import com.conversantmedia.util.collection.spatial.HyperPoint;
 import com.conversantmedia.util.collection.spatial.HyperRect;
-import com.conversantmedia.util.collection.spatial.RTree;
 import com.conversantmedia.util.collection.spatial.RectBuilder;
 
 public final class Rect3d implements HyperRect {
@@ -173,22 +172,15 @@ public final class Rect3d implements HyperRect {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Rect3d rect2D = (Rect3d) o;
+        final Rect3d rect3d = (Rect3d) o;
 
-        return RTree.isEqual(min.x, rect2D.min.x) &&
-                RTree.isEqual(max.x, rect2D.max.x) &&
-                RTree.isEqual(min.y, rect2D.min.y) &&
-                RTree.isEqual(max.y, rect2D.max.y) &&
-                RTree.isEqual(min.z, rect2D.min.z) &&
-                RTree.isEqual(max.z, rect2D.max.z);
-
+        return min.equals(rect3d.min) &&
+                max.equals(rect3d.max);
     }
 
     @Override
     public int hashCode() {
-        int result = min.hashCode();
-        result = 31 * result + max.hashCode();
-        return result;
+        return min.hashCode() ^ 31*max.hashCode();
     }
 
     public String toString() {

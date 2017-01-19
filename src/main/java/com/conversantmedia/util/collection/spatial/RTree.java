@@ -37,71 +37,93 @@ public final class RTree<T> implements SpatialSearch<T> {
     private final int mMin;
     private final int mMax;
     private final RectBuilder<T> builder;
-    private Node<T> root;
-    private Split splitType;
-    private int entryCount;
+    private final Split splitType;
+
+    private Node<T> root = null;
 
     protected RTree(final RectBuilder<T> builder, final int mMin, final int mMax, final Split splitType) {
         this.mMin = mMin;
         this.mMax = mMax;
         this.builder = builder;
         this.splitType = splitType;
-        this.entryCount = 0;
-        root = Leaf.create(builder, mMin, mMax, splitType);
     }
 
     @Override
     public int search(final HyperRect rect, final T[] t) {
-        return root.search(rect, t, 0);
-
+        if(root != null) {
+            return root.search(rect, t, 0);
+        }
+        return 0;
     }
 
     @Override
     public void search(HyperRect rect, Consumer<T> consumer) {
-        root.search(rect, consumer);
+        if(root != null) {
+            root.search(rect, consumer);
+        }
+    }
+
+    @Override
+    public int intersect(final HyperRect rect, final T[] t) {
+        if(root != null) {
+            return root.intersects(rect, t, 0);
+        }
+        return 0;
+    }
+
+    @Override
+    public void intersect(HyperRect rect, Consumer<T> consumer) {
+        if(root != null) {
+            root.intersects(rect, consumer);
+        }
     }
 
     @Override
     public void add(final T t) {
-        root = root.add(t);
-        entryCount++;
+        if(root != null) {
+            root = root.add(t);
+        } else {
+            root = Leaf.create(builder, mMin, mMax, splitType);
+            root.add(t);
+        }
     }
 
     @Override
     public void remove(final T t) {
-        Node<T> removed = root.remove(t);
-        if (removed != null) {
-            entryCount--;
+        if(root != null) {
+            root = root.remove(t);
         }
     }
 
     @Override
     public void update(final T told, final T tnew) {
-        root.update(told, tnew);
+        if(root != null) {
+            root = root.update(told, tnew);
+        }
+    }
+
+    @Override
+    public int getEntryCount() {
+        if(root  != null) {
+            return root.totalSize();
+        }
+        return 0;
     }
 
     /**
      * returns whether or not the HyperRect will enclose all of the data entries in t
      *
-     * @param rect HyperRect to contain entries
      * @param t    Data entries to be evaluated
-     * @return Whether or not all entries lie inside rect
-     */
-    public boolean contains(final HyperRect rect, final T[] t) {
-        for (int i = 0; i < t.length; i++) {
-            if (!rect.contains(builder.getBBox(t[i]))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @return number of data entries stored in the RTree
+     *
+     * @return boolean - Whether or not all entries lie inside rect
      */
     @Override
-    public int getEntryCount() {
-        return entryCount;
+    public boolean contains(final T t) {
+        final HyperRect bbox = builder.getBBox(t);
+        if(root != null) {
+            return root.contains(bbox, t);
+        }
+        return false;
     }
 
     public static boolean isEqual(final double a, final double b) {
@@ -114,13 +136,17 @@ public final class RTree<T> implements SpatialSearch<T> {
 
     @Override
     public void forEach(Consumer<T> consumer) {
-        root.forEach(consumer);
+        if(root != null) {
+            root.forEach(consumer);
+        }
     }
 
     void instrumentTree() {
-        root = root.instrument();
-        ((CounterNode<T>) root).searchCount = 0;
-        ((CounterNode<T>) root).bboxEvalCount = 0;
+        if(root != null) {
+            root = root.instrument();
+            ((CounterNode<T>) root).searchCount = 0;
+            ((CounterNode<T>) root).bboxEvalCount = 0;
+        }
     }
 
     @Override
@@ -133,8 +159,8 @@ public final class RTree<T> implements SpatialSearch<T> {
         return stats;
     }
 
-    public Node<T> getRoot() {
-        return this.root;
+    Node<T> getRoot() {
+        return root;
     }
 
 

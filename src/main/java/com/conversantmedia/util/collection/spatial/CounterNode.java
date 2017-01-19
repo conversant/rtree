@@ -37,50 +37,70 @@ final class CounterNode<T> implements Node<T> {
 
     @Override
     public boolean isLeaf() {
-        return this.node.isLeaf();
+        return node.isLeaf();
     }
 
     @Override
     public HyperRect getBound() {
-        return this.node.getBound();
+        return node.getBound();
     }
 
     @Override
     public Node<T> add(T t) {
-        return this.node.add(t);
+        return node.add(t);
     }
 
     @Override
-    public Node<T> remove(T t) { return this.node.remove(t); }
+    public Node<T> remove(T t) { return node.remove(t); }
 
     @Override
-    public Node<T> update(T told, T tnew) { return this.node.update(told, tnew); }
+    public Node<T> update(T told, T tnew) { return node.update(told, tnew); }
 
     @Override
     public int search(HyperRect rect, T[] t, int n) {
         searchCount++;
-        bboxEvalCount += this.node.size();
-        return this.node.search(rect, t, n);
+        bboxEvalCount += node.size();
+        return node.search(rect, t, n);
     }
 
     @Override
     public int size() {
-        return this.node.size();
+        return node.size();
+    }
+
+    @Override
+    public int totalSize() {
+        return node.totalSize();
     }
 
     @Override
     public void forEach(Consumer<T> consumer) {
-        this.node.forEach(consumer);
+        node.forEach(consumer);
     }
 
     @Override
     public void search(HyperRect rect, Consumer<T> consumer) {
-        this.node.search(rect, consumer);
+        node.search(rect, consumer);
+    }
+
+    @Override
+    public int intersects(HyperRect rect, T[] t, int n) {
+        return node.intersects(rect, t, n);
+    }
+
+    @Override
+    public void intersects(HyperRect rect, Consumer<T> consumer) {
+        node.intersects(rect, consumer);
+    }
+
+    @Override
+    public boolean contains(HyperRect rect, T t) {
+        return node.contains(rect, t);
     }
 
     @Override
     public void collectStats(Stats stats, int depth) {
-        this.node.collectStats(stats, depth);
+        node.collectStats(stats, depth);
     }
 
     @Override

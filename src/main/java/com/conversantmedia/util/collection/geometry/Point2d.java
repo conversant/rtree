@@ -22,6 +22,7 @@ package com.conversantmedia.util.collection.geometry;
 
 import com.conversantmedia.util.collection.spatial.HyperPoint;
 import com.conversantmedia.util.collection.spatial.HyperRect;
+import com.conversantmedia.util.collection.spatial.RTree;
 import com.conversantmedia.util.collection.spatial.RectBuilder;
 
 /**
@@ -73,6 +74,20 @@ public final class Point2d implements HyperPoint {
         } else {
             throw new IllegalArgumentException("Invalid dimension");
         }
+    }
+
+    public boolean equals(final Object o) {
+        if(this == o) return true;
+        if(o==null || getClass() != o.getClass()) return false;
+
+        final Point2d p = (Point2d) o;
+        return RTree.isEqual(x, p.x) &&
+                RTree.isEqual(y, p.y);
+    }
+
+
+    public int hashCode() {
+        return Double.hashCode(x) ^ 31*Double.hashCode(y);
     }
 
     public final static class Builder implements RectBuilder<Point2d> {

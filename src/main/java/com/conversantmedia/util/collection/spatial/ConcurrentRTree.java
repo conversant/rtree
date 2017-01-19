@@ -39,6 +39,26 @@ public class ConcurrentRTree<T> implements SpatialSearch<T> {
         this.writeLock = lock.writeLock();
     }
 
+    @Override
+    public int intersect(HyperRect rect, T[] t) {
+        readLock.lock();
+        try {
+            return rTree.intersect(rect, t);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    @Override
+    public void intersect(HyperRect rect, Consumer<T> consumer) {
+        readLock.lock();
+        try {
+            rTree.intersect(rect, consumer);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
     /**
      * Blocking locked search
      *
@@ -204,6 +224,16 @@ public class ConcurrentRTree<T> implements SpatialSearch<T> {
         readLock.lock();
         try {
             rTree.search(rect, consumer);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    @Override
+    public boolean contains(T t) {
+        readLock.lock();
+        try {
+            return rTree.contains(t);
         } finally {
             readLock.unlock();
         }
