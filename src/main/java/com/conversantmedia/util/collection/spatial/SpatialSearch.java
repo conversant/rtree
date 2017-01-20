@@ -106,7 +106,7 @@ public interface SpatialSearch<T> {
     /**
      * Iterate over all entries in the tree
      *
-     * @param consumer
+     * @param consumer - callback for each element
      */
     void forEach(Consumer<T> consumer);
 

@@ -156,6 +156,12 @@
 	    </execution>
 	  </executions>
 	</plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+            <classifier>${jdkClassifier}</classifier>
+          </configuration>
+        </plugin>        
 	<plugin>
 	  <artifactId>maven-resources-plugin</artifactId>
 	  <version>2.6</version>
@@ -215,6 +221,36 @@
 	</plugin>
     </plugins>
   </build>
+
+    <profiles>
+    <profile>
+      <id>jdk7</id>
+      <activation>
+        <jdk>1.7</jdk>
+      </activation>
+      <properties>
+        <jdkClassifier>jdk7</jdkClassifier>
+      </properties>
+    </profile>
+    <profile>
+      <id>jdk8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <properties>
+        <jdkClassifier>jdk8</jdkClassifier>
+      </properties>
+    </profile>
+    <profile>
+      <id>jdk9</id>
+      <activation>
+        <jdk>1.9</jdk>
+      </activation>
+      <properties>
+        <jdkClassifier>jdk9</jdkClassifier>
+      </properties>
+    </profile>
+  </profiles>
 
   <dependencies>
     <dependency>
