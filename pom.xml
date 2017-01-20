@@ -4,7 +4,7 @@
   <groupId>com.conversantmedia</groupId>
   <artifactId>rtree</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.3</version>
+  <version>1.0.4-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <url>https://github.com/conversant/rtree</url>
   <description>Conversant RTree - N dimensional spatial index</description>
