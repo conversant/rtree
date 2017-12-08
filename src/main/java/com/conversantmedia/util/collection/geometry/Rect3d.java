@@ -25,9 +25,9 @@ import com.conversantmedia.util.collection.spatial.HyperRect;
 import com.conversantmedia.util.collection.spatial.RectBuilder;
 
 public final class Rect3d implements HyperRect {
-    final Point3d min, max;
+    private final Point3d min, max;
 
-    public Rect3d(final Point3d p) {
+    Rect3d(final Point3d p) {
         min = new Point3d(p.x, p.y, p.z);
         max = new Point3d(p.x, p.y, p.z);
     }
@@ -37,7 +37,7 @@ public final class Rect3d implements HyperRect {
         max = new Point3d(x2, y2, z2);
     }
 
-    public Rect3d(final Point3d point1, final Point3d point2) {
+    Rect3d(final Point3d point1, final Point3d point2) {
 
         final double minx, maxx, miny, maxy, minz, maxz;
 
@@ -85,7 +85,7 @@ public final class Rect3d implements HyperRect {
 
     @Override
     public int getNDim() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -136,17 +136,12 @@ public final class Rect3d implements HyperRect {
     public boolean intersects(final HyperRect r) {
         final Rect3d r2 = (Rect3d)r;
 
-        if(min.x > r2.max.x ||
-                r2.min.x > max.x ||
-                min.y > r2.max.y ||
-                r2.min.y > max.y ||
-                min.z > r2.max.z ||
-                r2.min.z > max.z
-                ) {
-            return false;
-        }
-
-        return true;
+        return !(min.x > r2.max.x) &&
+                !(r2.min.x > max.x) &&
+                !(min.y > r2.max.y) &&
+                !(r2.min.y > max.y) &&
+                !(min.z > r2.max.z) &&
+                !(r2.min.z > max.z);
     }
 
     @Override
@@ -184,24 +179,22 @@ public final class Rect3d implements HyperRect {
     }
 
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append('(');
-        sb.append(Double.toString(min.x));
-        sb.append(',');
-        sb.append(Double.toString(min.y));
-        sb.append(',');
-        sb.append(Double.toString(min.z));
-        sb.append(')');
-        sb.append(' ');
-        sb.append('(');
-        sb.append(Double.toString(max.x));
-        sb.append(',');
-        sb.append(Double.toString(max.y));
-        sb.append(',');
-        sb.append(Double.toString(max.z));
-        sb.append(')');
 
-        return sb.toString();
+        return "(" +
+                Double.toString(min.x) +
+                ',' +
+                Double.toString(min.y) +
+                ',' +
+                Double.toString(min.z) +
+                ')' +
+                ' ' +
+                '(' +
+                Double.toString(max.x) +
+                ',' +
+                Double.toString(max.y) +
+                ',' +
+                Double.toString(max.z) +
+                ')';
     }
 
     public final static class Builder implements RectBuilder<Rect3d> {
