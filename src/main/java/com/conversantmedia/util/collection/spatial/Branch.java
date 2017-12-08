@@ -194,7 +194,7 @@ final class Branch<T> implements Node<T> {
     public void intersects(HyperRect rect, Consumer<T> consumer) {
         for(int i = 0; i < size; i++) {
             if(rect.intersects(child[i].getBound())) {
-                child[i].search(rect, consumer);
+                child[i].intersects(rect, consumer);
             }
         }
     }
