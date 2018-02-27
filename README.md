@@ -14,6 +14,6 @@ Maven users can incorporate Conversant R-Tree the usual way.
 <dependency>
   <groupId>com.conversantmedia</groupId>
   <artifactId>rtree</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
 </dependency>
 ```
