@@ -14,6 +14,12 @@ Maven users can incorporate Conversant R-Tree the usual way.
 <dependency>
   <groupId>com.conversantmedia</groupId>
   <artifactId>rtree</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
 </dependency>
 ```
+
+Optionally specify a classifier for your version of Java
+| classifier |
+|------------|
+| jdk8 |
+| jdk10|
