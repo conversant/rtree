@@ -4,7 +4,7 @@
   <groupId>com.conversantmedia</groupId>
   <artifactId>rtree</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.5-SNAPSHOT</version>
+  <version>1.0.5</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <url>https://github.com/conversant/rtree</url>
   <description>Conversant RTree - N dimensional spatial index</description>
@@ -224,15 +224,6 @@
 
     <profiles>
     <profile>
-      <id>jdk7</id>
-      <activation>
-        <jdk>1.7</jdk>
-      </activation>
-      <properties>
-        <jdkClassifier>jdk7</jdkClassifier>
-      </properties>
-    </profile>
-    <profile>
       <id>jdk8</id>
       <activation>
         <jdk>1.8</jdk>
@@ -242,12 +233,12 @@
       </properties>
     </profile>
     <profile>
-      <id>jdk9</id>
+      <id>jdk10</id>
       <activation>
-        <jdk>1.9</jdk>
+        <jdk>10</jdk>
       </activation>
       <properties>
-        <jdkClassifier>jdk9</jdkClassifier>
+        <jdkClassifier>jdk10</jdkClassifier>
       </properties>
     </profile>
   </profiles>

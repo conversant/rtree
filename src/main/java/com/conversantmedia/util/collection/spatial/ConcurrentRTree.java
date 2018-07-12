@@ -23,6 +23,7 @@ package com.conversantmedia.util.collection.spatial;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.Consumer;
+import java.util.Collection;
 
 /**
  * Created by jcovert on 12/30/15.
@@ -224,6 +225,16 @@ public class ConcurrentRTree<T> implements SpatialSearch<T> {
         readLock.lock();
         try {
             rTree.search(rect, consumer);
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+        @Override
+    public void search(final HyperRect rect, final Collection<T> collection) {
+        readLock.lock();
+        try {
+            rTree.search(rect, collection);
         } finally {
             readLock.unlock();
         }

@@ -29,6 +29,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.function.Consumer;
+import java.util.Collection;
 
 import static org.mockito.Mockito.*;
 
@@ -285,6 +286,12 @@ public class ConcurrentRTreeTest {
 
         @Override
         public void search(HyperRect rect, Consumer consumer) {
+            Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
+            Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
+        }
+
+        @Override
+        public void search(HyperRect rect, Collection collection) {
             Assert.assertNotEquals("Read lock should have reader while search in progress", lock.readers, 0);
             Assert.assertFalse("Attempting to read while writers are writing", lock.isLocked);
         }

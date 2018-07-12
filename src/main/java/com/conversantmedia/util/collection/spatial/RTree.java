@@ -21,6 +21,7 @@ package com.conversantmedia.util.collection.spatial;
  */
 
 import java.util.function.Consumer;
+import java.util.Collection;
 
 /**
  * <p>Data structure to make range searching more efficient. Indexes multi-dimensional information
@@ -60,6 +61,13 @@ public final class RTree<T> implements SpatialSearch<T> {
     public void search(HyperRect rect, Consumer<T> consumer) {
         if(root != null) {
             root.search(rect, consumer);
+        }
+    }
+
+    @Override
+    public void search(HyperRect rect, Collection<T> collection) {
+        if(root != null) {
+            root.search(rect, t -> collection.add(t));
         }
     }
 

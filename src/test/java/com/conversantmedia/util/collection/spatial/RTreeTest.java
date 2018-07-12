@@ -28,6 +28,8 @@ import org.junit.Test;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by jcairns on 4/30/15.
@@ -54,6 +56,33 @@ public class RTreeTest {
             Assert.assertTrue(result[i].getCoord(Point2d.X) <= 8);
             Assert.assertTrue(result[i].getCoord(Point2d.Y) >= 2);
             Assert.assertTrue(result[i].getCoord(Point2d.Y) <= 8);
+        }
+    }
+
+    @Test
+    public void pointCollectionSearchTest() {
+
+        final RTree<Point2d> pTree = new RTree<>(new Point2d.Builder(), 2, 8, RTree.Split.AXIAL);
+
+        for(int i=0; i<10; i++) {
+            pTree.add(new Point2d(i, i));
+        }
+
+        final Rect2d rect = new Rect2d(new Point2d(2,2), new Point2d(8,8));
+
+        final List<Point2d> result = new ArrayList<>();
+
+        pTree.search(rect, result);
+
+        final int n = result.size();
+
+        Assert.assertEquals(7, n);
+
+        for(int i=0; i<n; i++) {
+            Assert.assertTrue(result.get(i).getCoord(Point2d.X) >= 2);
+            Assert.assertTrue(result.get(i).getCoord(Point2d.X) <= 8);
+            Assert.assertTrue(result.get(i).getCoord(Point2d.Y) >= 2);
+            Assert.assertTrue(result.get(i).getCoord(Point2d.Y) <= 8);
         }
     }
 

@@ -21,6 +21,7 @@ package com.conversantmedia.util.collection.spatial;
  */
 
 import java.util.function.Consumer;
+import java.util.Collection;
 
 /**
  * Created by jcovert on 12/30/15.
@@ -34,7 +35,7 @@ public interface SpatialSearch<T> {
      *
      * @return Number of results found
      */
-    int intersects(HyperRect rect, final T[] t);
+    int intersects(HyperRect rect, T[] t);
 
     /**
      * Search for entries intersecting given bounding rect
@@ -43,8 +44,7 @@ public interface SpatialSearch<T> {
      * @param consumer - callback to receive intersecting objects
      *
      */
-    void intersects(final HyperRect rect, final Consumer<T> consumer);
-
+    void intersects(HyperRect rect, Consumer<T> consumer);
 
     /**
      * Search for entries contained by the given bounding rect
@@ -54,7 +54,7 @@ public interface SpatialSearch<T> {
      *
      * @return Number of results found
      */
-    int search(HyperRect rect, final T[] t);
+    int search(HyperRect rect, T[] t);
 
     /**
      * Search for entries contained by the given bounding rect
@@ -63,7 +63,16 @@ public interface SpatialSearch<T> {
      * @param consumer - callback to receive intersecting objects
      *
      */
-    void search(final HyperRect rect, final Consumer<T> consumer);
+    void search(HyperRect rect, Consumer<T> consumer);
+
+    /**
+     * Search for entries contained by the given bounding rect
+     *
+     * @param rect - Bounding rectangle to use for querying
+     * @param collection - collection to receive results
+     *
+     */
+    void search(HyperRect rect, Collection<T> collection);
 
     /**
      * returns whether or not the HyperRect will enclose all of the data entries in t
@@ -72,21 +81,21 @@ public interface SpatialSearch<T> {
      *
      * @return boolean - Whether or not all entries lie inside rect
      */
-    boolean contains(final T t);
+    boolean contains(T t);
 
     /**
      * Add the data entry to the SpatialSearch structure
      *
      * @param t Data entry to be added
      */
-    void add(final T t);
+    void add(T t);
 
     /**
      * Remove the data entry from the SpatialSearch structure
      *
      * @param t Data entry to be removed
      */
-    void remove(final T t);
+    void remove(T t);
 
     /**
      * Update entry in tree
@@ -94,7 +103,7 @@ public interface SpatialSearch<T> {
      * @param told - Entry to update
      * @param tnew - Entry to update it to
      */
-    void update(final T told, final T tnew);
+    void update(T told, T tnew);
 
     /**
      * Get the number of entries in the tree
