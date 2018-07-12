@@ -19,7 +19,8 @@ Maven users can incorporate Conversant R-Tree the usual way.
 ```
 
 Optionally specify a classifier for your version of Java
+
 | classifier |
 |:------------:|
-| jdk8 |
-| jdk10|
+| jdk8         |
+| jdk10        |
