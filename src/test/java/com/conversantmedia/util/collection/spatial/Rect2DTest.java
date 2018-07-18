@@ -46,7 +46,7 @@ public class Rect2DTest {
 
         Rect2d rect = new Rect2d(0, 0, 4, 3);
 
-        // shouldn't affect MBR
+        // shouldn't effect MBR
         Rect2d rectInside = new Rect2d(0, 0, 1, 1);
         HyperRect mbr = rect.getMbr(rectInside);
         double expectedMinX = rect.getMin().getCoord(0);
